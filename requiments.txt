@@ -1,0 +1,8 @@
+sqlalchemy
+asyncpg
+databases
+fastapi
+orm
+starlette
+uvicorn
+vk_api
