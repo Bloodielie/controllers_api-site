@@ -1,13 +1,12 @@
-from fastapi import FastAPI, Path
+#uvicorn main:app --reload
+from fastapi import FastAPI
 import vk_api
 from config import login, password
 import asyncio
 from utils.validation import sort_busstop
 from time import time as tm
-from database import *
+from database import BusStopClear, BusStopDirty, database
 from utils.write_in_bd_data import Writer
-from starlette.middleware.cors import CORSMiddleware
-from utils.utils import get_valid_city, check_bus, create_transport_info
 
 vk = vk_api.VkApi(login=login, password=password)
 vk.auth()
@@ -15,31 +14,12 @@ app = FastAPI()
 
 writer = Writer(vk)
 
-origins = [
-    "*"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-writers = {
-    'brest': [BusStopDirty_Brest, BusStopClear_Brest],
-    'gomel': [BusStopDirty_Gomel, BusStopClear_Gomel],
-    'grodno': [BusStopDirty_Grodno, BusStopClear_Grodno]
-}
 
 @app.on_event("startup")
 async def startup():
     await database.connect()
-    for wr in writers:
-        data = writers.get(wr)
-        for info in data:
-            asyncio.ensure_future(writer.write_in_database(info))
+    asyncio.ensure_future(writer.write_in_database(BusStopDirty, 'dirty'))
+    asyncio.ensure_future(writer.write_in_database(BusStopClear, 'clean'))
 
 
 @app.on_event("shutdown")
@@ -47,36 +27,17 @@ async def shutdown():
     await database.disconnect()
 
 
-@app.get("/bus_stop/{city}/dirty")
-async def bus_stop_dirty(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+@app.get("/bus_stop/dirty")
+async def bus_stop_dirty(time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
     _time = int(tm()) - time
-    datas = await get_valid_city(city, 'dirty', _time, writers)
-    data = sort_busstop(data=datas, _sort=sort, time_format=time_format)
-    return data
-
-
-@app.get("/bus_stop/{city}/clean")
-async def bus_stop_clean(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    _time = int(tm()) - time
-    datas = await get_valid_city(city, 'clean', _time, writers)
+    datas = await BusStopDirty.objects.filter(time__gte=_time).all()
     data = sort_busstop(datas, _sort=sort, time_format=time_format)
     return data
 
 
-@app.get("/bus_stop/{city}/dirty/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'dirty', 'bus')
-
-
-@app.get("/bus_stop/{city}/clean/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'clean', 'bus')
-
-
-@app.get("/trolleybuses_stop/{city}/dirty/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'dirty', 'trolleybuses')
-
-@app.get("/trolleybuses_stop/{city}/clean/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'clean', 'trolleybuses')
+@app.get("/bus_stop/clean")
+async def bus_stop_clean(time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+    _time = int(tm()) - time
+    datas = await BusStopClear.objects.filter(time__gte=_time).all()
+    data = sort_busstop(datas, _sort=sort, time_format=time_format)
+    return data

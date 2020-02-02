@@ -1,32 +1,24 @@
-from config import clean_dirty_word, clean_clean_word
+from config import stop_bus
 from datetime import datetime
-
-def replacer(string: str) -> str:
-    return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '')
 
 
 def cleaning_post(data: tuple):
     for date in data:
-        word = replacer(date[0].lower())
-        for iteration_value, word_data in enumerate(word.split()):
-            if word_data in clean_dirty_word:
-                break
-            if iteration_value >= len(word.split())-1:
-                temporary_tuple = (word, date[1])
-                yield temporary_tuple
+        if ('чисто' in date[0]) or ('как' in date[0]) or ('актуально?' in date[0]) or ('cтоят на' in date[0]):
+            pass
+        else:
+            temporary_tuple = (date[0].replace(',', '').replace('\n', '').replace('-', ' ').replace('!', ''), date[1])
+            yield temporary_tuple
 
 
 def cleaning_post_otherwise(data: tuple):
     for date in data:
-        word = replacer(date[0].lower())
-        for iteration_value, word_data in enumerate(word.split()):
-            if word_data in clean_clean_word:
-                temporary_tuple = (word, date[1])
-                yield temporary_tuple
-                break
+        if 'чисто' in date[0]:
+            temporary_tuple = (date[0].replace(',', '').replace('\n', '').replace('-', ' ').replace('!', ''), date[1])
+            yield temporary_tuple
 
 
-def validation_bus_stop(data: tuple, stop_bus):
+def validation_bus_stop(data: tuple):
     """ Поиск остановки в строчке"""
     temp_data = []
     for _data in data:
@@ -52,7 +44,7 @@ def sort_busstop(data: tuple, _sort=None, time_format='%H:%M'):
     sort = 1
     if _sort == "Сообщения":
         sort = 0
-    elif str(_sort).lower() in ['none', 'no', 'not']:
+    elif _sort in ['none', 'no', 'not']:
         return time_data
 
     return dict(sorted(time_data.items(), key=lambda x: x[1][sort], reverse=True))
