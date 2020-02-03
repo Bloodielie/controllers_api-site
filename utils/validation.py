@@ -5,7 +5,7 @@ def replacer(string: str) -> str:
     return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '')
 
 
-def cleaning_post(data: tuple):
+def cleaning_post(data: tuple) -> tuple:
     for date in data:
         word = replacer(date[0].lower())
         for iteration_value, word_data in enumerate(word.split()):
@@ -16,7 +16,7 @@ def cleaning_post(data: tuple):
                 yield temporary_tuple
 
 
-def cleaning_post_otherwise(data: tuple):
+def cleaning_post_otherwise(data: tuple) -> tuple:
     for date in data:
         word = replacer(date[0].lower())
         for iteration_value, word_data in enumerate(word.split()):
@@ -26,7 +26,7 @@ def cleaning_post_otherwise(data: tuple):
                 break
 
 
-def validation_bus_stop(data: tuple, stop_bus):
+def validation_bus_stop(data: tuple, stop_bus: list) -> list:
     """ Поиск остановки в строчке"""
     temp_data = []
     for _data in data:
@@ -40,7 +40,7 @@ def validation_bus_stop(data: tuple, stop_bus):
     return temp_data
 
 
-def sort_busstop(data: tuple, _sort=None, time_format='%H:%M'):
+def sort_busstop(data: tuple, _sort=None, time_format='%H:%M') -> dict:
     """ Сортировка генератора по определенному критерию """
     time_data = {}
     for date in data:

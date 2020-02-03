@@ -1,4 +1,6 @@
-def get_post_wall(vk, count=100, group_id=72869598):
+from vk_api import VkApi
+
+def get_post_wall(vk: VkApi, count: int = 100, group_id: int = 72869598) -> tuple:
     """ Получения постов """
     wall = vk.method('wall.get', values={'owner_id': -group_id, 'count': count})
     for i in wall['items']:
@@ -6,7 +8,7 @@ def get_post_wall(vk, count=100, group_id=72869598):
         yield temporary_tuple
 
 
-def get_comment_data(vk, group_id):
+def get_comment_data(vk: VkApi, group_id: int) -> tuple:
     wall = vk.method('wall.get', values={'owner_id': -group_id, 'count': 2})
     post_id = wall['items'][0]['id']
     post_id_2 = wall['items'][1]['id']
