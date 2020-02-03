@@ -7,7 +7,7 @@ from time import time as tm
 from database import *
 from utils.write_in_bd_data import Writer
 from starlette.middleware.cors import CORSMiddleware
-from utils.utils import get_valid_city, check_bus, create_transport_info
+from utils.utils import get_valid_city, TransportInformation
 
 vk = vk_api.VkApi(login=login, password=password)
 vk.auth()
@@ -33,6 +33,8 @@ writers = {
     'grodno': [BusStopDirty_Grodno, BusStopClear_Grodno]
 }
 
+transport_utils = TransportInformation(writers)
+
 @app.on_event("startup")
 async def startup():
     await database.connect()
@@ -54,7 +56,6 @@ async def bus_stop_dirty(*, city: str = Path(..., title="city for get data"), ti
     data = sort_busstop(data=datas, _sort=sort, time_format=time_format)
     return data
 
-
 @app.get("/bus_stop/{city}/clean")
 async def bus_stop_clean(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
     _time = int(tm()) - time
@@ -65,18 +66,17 @@ async def bus_stop_clean(*, city: str = Path(..., title="city for get data"), ti
 
 @app.get("/bus_stop/{city}/dirty/{bus_number}")
 async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'dirty', 'bus')
-
+    return await transport_utils.create_bus_info(sort, time_format, bus_number, time, city, 'dirty')
 
 @app.get("/bus_stop/{city}/clean/{bus_number}")
 async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'clean', 'bus')
+    return await transport_utils.create_bus_info(sort, time_format, bus_number, time, city, 'clean')
 
 
 @app.get("/trolleybuses_stop/{city}/dirty/{bus_number}")
 async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'dirty', 'trolleybuses')
+    return await transport_utils.create_trolleybus_info(sort, time_format, bus_number, time, city, 'dirty')
 
 @app.get("/trolleybuses_stop/{city}/clean/{bus_number}")
 async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    return await create_transport_info(writers, sort, time_format, bus_number, time, city, 'clean', 'trolleybuses')
+    return await transport_utils.create_trolleybus_info(sort, time_format, bus_number, time, city, 'clean')
