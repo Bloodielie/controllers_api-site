@@ -6,12 +6,14 @@ from utils.utils import get_max_value_bd
 from config import id_groups
 import re
 from vk_api import VkApi
+from orm import Model
+
 
 class Writer:
-    def __init__(self, vk):
+    def __init__(self, vk: VkApi):
         self.vk = vk
 
-    async def write_in_database(self, model):
+    async def write_in_database(self, model: Model):
         name_class: str = model.__name__.lower()
         data_utils = DataGetter(name_class)
         while True:
@@ -24,11 +26,12 @@ class Writer:
             await sleep(update_time)
 
     @staticmethod
-    async def write_data_bd(model, data: list, column_name: str) -> None:
+    async def write_data_bd(model: Model, data: list, column_name: str) -> None:
         max_time_bd: int = await get_max_value_bd(model, column_name)
         for _data in data:
             if _data[1] > max_time_bd:
                 await model.objects.create(bus_stop=_data[0], time=_data[1])
+
 
 class DataGetter:
     def __init__(self, name_class: str):

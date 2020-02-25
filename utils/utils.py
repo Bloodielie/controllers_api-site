@@ -3,13 +3,15 @@ from config import list_bus_stop
 from time import time as tm
 from .validation import sort_busstop
 
+
 async def get_max_value_bd(model, value):
     selection = model.objects.build_select_expression().order_by(desc(value))
     max_value_bd = await model.__database__.execute(selection)
     response = await model.objects.get(id=max_value_bd)
     return response[value]
 
-async def get_valid_city(city: str, type_geter: str, _time: int, writers):
+
+async def get_valid_city(city: str, type_geter: str, _time: int, writers: dict):
     city = city.lower()
     db_class = writers.get(city)
     if not db_class:
@@ -19,7 +21,8 @@ async def get_valid_city(city: str, type_geter: str, _time: int, writers):
     elif type_geter == 'clean':
         return await db_class[1].objects.filter(time__gte=_time).all()
 
-def check_bus(city, type_bus: str, data, bus_number, sort: str) -> dict:
+
+def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) -> dict:
     """ Поиск грязных остановок в остановках автобуса """
     bus_stop_list = list_bus_stop.get(city)
     json_utils = {}
@@ -27,7 +30,7 @@ def check_bus(city, type_bus: str, data, bus_number, sort: str) -> dict:
         json_utils = bus_stop_list[0] if type_bus == 'bus' else bus_stop_list[1]
     _bus_stop = json_utils.get(bus_number)
     if not _bus_stop:
-        return {'number_bus_not_found': bus_number}
+        return {'number_bus_not_found': [bus_number, 228]}
 
     temporary_lists = []
     for stop in _bus_stop:
@@ -42,14 +45,15 @@ def check_bus(city, type_bus: str, data, bus_number, sort: str) -> dict:
         _sort = 0
     return dict(sorted(dict(temporary_lists).items(), key=lambda x: x[1][_sort], reverse=True))
 
+
 class TransportInformation:
     def __init__(self, writers):
         self.writers = writers
 
-    async def __create_transport_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str, type_transport: str):
-        _time = int(tm()) - time
+    async def __create_transport_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str, type_transport: str) -> dict:
+        _time: int = int(tm()) - time
         datas = await get_valid_city(city, type_sort, _time, self.writers)
-        data = sort_busstop(datas, _sort=sort, time_format=time_format)
+        data: dict = sort_busstop(datas, _sort=sort, time_format=time_format)
         return check_bus(city, type_transport, data, bus_number, sort)
 
     async def create_bus_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str) -> dict:

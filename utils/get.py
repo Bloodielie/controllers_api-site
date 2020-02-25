@@ -1,5 +1,6 @@
 from vk_api import VkApi
 
+
 def get_post_wall(vk: VkApi, count: int = 100, group_id: int = 72869598) -> tuple:
     """ Получения постов """
     wall = vk.method('wall.get', values={'owner_id': -group_id, 'count': count})

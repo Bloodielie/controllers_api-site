@@ -13,8 +13,6 @@ vk = vk_api.VkApi(login=login, password=password)
 vk.auth()
 app = FastAPI()
 
-writer = Writer(vk)
-
 origins = [
     "*"
 ]
@@ -33,10 +31,12 @@ writers = {
     'grodno': [BusStopDirty_Grodno, BusStopClear_Grodno]
 }
 
+writer = Writer(vk)
 transport_utils = TransportInformation(writers)
 
+
 @app.on_event("startup")
-async def startup():
+async def startup() -> None:
     await database.connect()
     for wr in writers:
         data = writers.get(wr)
@@ -45,38 +45,39 @@ async def startup():
 
 
 @app.on_event("shutdown")
-async def shutdown():
+async def shutdown() -> None:
     await database.disconnect()
 
 
 @app.get("/bus_stop/{city}/dirty")
-async def bus_stop_dirty(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    _time = int(tm()) - time
+async def bus_stop_dirty(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
+    _time: int = int(tm()) - time
     datas = await get_valid_city(city, 'dirty', _time, writers)
-    data = sort_busstop(data=datas, _sort=sort, time_format=time_format)
-    return data
+    return sort_busstop(data=datas, _sort=sort, time_format=time_format)
+
 
 @app.get("/bus_stop/{city}/clean")
-async def bus_stop_clean(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
-    _time = int(tm()) - time
+async def bus_stop_clean(*, city: str = Path(..., title="city for get data"), time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
+    _time: int = int(tm()) - time
     datas = await get_valid_city(city, 'clean', _time, writers)
-    data = sort_busstop(datas, _sort=sort, time_format=time_format)
-    return data
+    return sort_busstop(data=datas, _sort=sort, time_format=time_format)
 
 
 @app.get("/bus_stop/{city}/dirty/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+async def bus_stop_dirty_bus(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
     return await transport_utils.create_bus_info(sort, time_format, bus_number, time, city, 'dirty')
 
+
 @app.get("/bus_stop/{city}/clean/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+async def bus_stop_clean_bus(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
     return await transport_utils.create_bus_info(sort, time_format, bus_number, time, city, 'clean')
 
 
 @app.get("/trolleybuses_stop/{city}/dirty/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+async def bus_stop_dirty_trolleybuses(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
     return await transport_utils.create_trolleybus_info(sort, time_format, bus_number, time, city, 'dirty')
 
+
 @app.get("/trolleybuses_stop/{city}/clean/{bus_number}")
-async def bus_stop_clean(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format='%H:%M'):
+async def bus_stop_clean_trolleybuses(city: str, bus_number: str, time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M') -> dict:
     return await transport_utils.create_trolleybus_info(sort, time_format, bus_number, time, city, 'clean')

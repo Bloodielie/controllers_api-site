@@ -1,6 +1,7 @@
 from config import clean_dirty_word, clean_clean_word
 from datetime import datetime
 
+
 def replacer(string: str) -> str:
     return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '')
 
@@ -40,7 +41,7 @@ def validation_bus_stop(data: tuple, stop_bus: list) -> list:
     return temp_data
 
 
-def sort_busstop(data: tuple, _sort=None, time_format='%H:%M') -> dict:
+def sort_busstop(data: tuple, _sort=None, time_format: str = '%H:%M') -> dict:
     """ Сортировка генератора по определенному критерию """
     time_data = {}
     for date in data:
