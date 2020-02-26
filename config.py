@@ -12,7 +12,7 @@ trolleybusesstop_brest = JsonUtils('json/trolleybusesstop_brest.json').get_json(
 trolleybusesstop_gomel = JsonUtils('json/trolleybusesstop_gomel.json').get_json()
 trolleybusesstop_grodno = JsonUtils('json/trolleybusesstop_grodno.json').get_json()
 
-url_bd = 'postgresql://postgres:{}@{}}/{}'
+url_bd = 'postgresql://postgres:1234@localhost/bus_stop'
 tb_name_brest_dirty = "bus_stop_dirty"
 tb_name_brest_clean = "bus_stop_clear"
 tb_name_gomel_dirty = "bus_stop_dirty_gomel"

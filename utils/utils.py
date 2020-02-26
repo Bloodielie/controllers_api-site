@@ -11,7 +11,7 @@ async def get_max_value_bd(model, value):
     return response[value]
 
 
-async def get_valid_city(city: str, type_geter: str, _time: int, writers: dict):
+async def get_city_data(city: str, type_geter: str, _time: int, writers: dict):
     city = city.lower()
     db_class = writers.get(city)
     if not db_class:
@@ -46,18 +46,7 @@ def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) 
     return dict(sorted(dict(temporary_lists).items(), key=lambda x: x[1][_sort], reverse=True))
 
 
-class TransportInformation:
-    def __init__(self, writers):
-        self.writers = writers
-
-    async def __create_transport_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str, type_transport: str) -> dict:
-        _time: int = int(tm()) - time
-        datas = await get_valid_city(city, type_sort, _time, self.writers)
-        data: dict = sort_busstop(datas, _sort=sort, time_format=time_format)
-        return check_bus(city, type_transport, data, bus_number, sort)
-
-    async def create_bus_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str) -> dict:
-        return await self.__create_transport_info(sort, time_format, bus_number, time, city, type_sort, 'bus')
-
-    async def create_trolleybus_info(self, sort: str, time_format: str, bus_number: str, time: int, city: str, type_sort: str) -> dict:
-        return await self.__create_transport_info(sort, time_format, bus_number, time, city, type_sort, 'trolleybus')
+async def bus_stop_data(time: int, city: str, selection_bus_stop: str, sort: str, time_format: str, writers: dict) -> dict:
+    unix_time: int = int(tm()) - time
+    data: tuple = await get_city_data(city, selection_bus_stop, unix_time, writers)
+    return sort_busstop(data=data, _sort=sort, time_format=time_format)
