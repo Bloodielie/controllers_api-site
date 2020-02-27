@@ -7,6 +7,7 @@ from config import id_groups
 import re
 from vk_api import VkApi
 from orm import Model
+from typing import Tuple
 
 
 class Writer:
@@ -18,7 +19,7 @@ class Writer:
         data_utils = DataGetter(name_class)
         while True:
             vk_post: tuple = data_utils.get_rewrite_post(self.vk)
-            data_post: tuple = data_utils.get_cleaning_post(vk_post)
+            data_post = data_utils.get_cleaning_post(vk_post)
             stop: list = data_utils.get_bus_stop()
             data: list = validation_bus_stop(data_post, stop)
             datas: list = list(sorted(data, key=lambda x: x[1]))
@@ -37,7 +38,7 @@ class DataGetter:
     def __init__(self, name_class: str):
         self.name_class = name_class
 
-    def get_rewrite_post(self, vk: VkApi) -> tuple:
+    def get_rewrite_post(self, vk: VkApi) -> Tuple[str, int]:
         id_group: int = self.__get_id_group()
         if self.name_class.find('gomel') != -1:
             return get_comment_data(vk, id_group)
@@ -60,7 +61,7 @@ class DataGetter:
             else:
                 return id_groups.get(city_name[0])[0]
 
-    def get_cleaning_post(self, vk_post: tuple) -> tuple:
+    def get_cleaning_post(self, vk_post: tuple) -> Tuple[str, int]:
         if self.name_class.find('dirty') != -1:
             return cleaning_post(vk_post)
         else:

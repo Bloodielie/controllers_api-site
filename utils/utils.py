@@ -25,24 +25,23 @@ async def get_city_data(city: str, type_geter: str, _time: int, writers: dict):
 def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) -> dict:
     """ Поиск грязных остановок в остановках автобуса """
     bus_stop_list = list_bus_stop.get(city)
-    json_utils = {}
+    json_utils: dict = {}
     if bus_stop_list:
-        json_utils = bus_stop_list[0] if type_bus == 'bus' else bus_stop_list[1]
-    _bus_stop = json_utils.get(bus_number)
+        json_utils: dict = bus_stop_list[0] if type_bus == 'bus' else bus_stop_list[1]
+    _bus_stop: list = json_utils.get(bus_number)
     if not _bus_stop:
         return {'number_bus_not_found': [bus_number, 228]}
 
-    temporary_lists = []
+    temporary_lists: list = []
     for stop in _bus_stop:
         for datas in data:
             if datas == stop.lower():
                 _data = data.get(datas)
-                t = (datas, [_data[0], _data[1]])
-                temporary_lists.append(t)
+                temporary_lists.append((datas, [_data[0], _data[1]]))
 
-    _sort = 1
+    _sort: int = 1
     if sort == "Сообщения":
-        _sort = 0
+        _sort: int = 0
     return dict(sorted(dict(temporary_lists).items(), key=lambda x: x[1][_sort], reverse=True))
 
 
