@@ -1,7 +1,7 @@
 import orm
 import sqlalchemy
 from databases import Database
-from config import url_bd, tb_name_brest_dirty, tb_name_brest_clean, tb_name_gomel_dirty, tb_name_gomel_clean, tb_name_grodno_dirty, tb_name_grodno_clean
+from configuration.config import url_bd, tb_name_brest_dirty, tb_name_brest_clean, tb_name_gomel_dirty, tb_name_gomel_clean, tb_name_grodno_dirty, tb_name_grodno_clean
 
 database = Database(url_bd)
 metadata = sqlalchemy.MetaData()

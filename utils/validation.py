@@ -1,4 +1,4 @@
-from config import clean_dirty_word, clean_clean_word
+from configuration.config import clean_dirty_word, clean_clean_word
 from datetime import datetime
 from typing import Tuple
 

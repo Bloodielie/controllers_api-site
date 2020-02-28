@@ -1,5 +1,5 @@
 from sqlalchemy import desc
-from config import list_bus_stop
+from configuration.config_variables import list_bus_stop
 from time import time as tm
 from .validation import sort_busstop
 

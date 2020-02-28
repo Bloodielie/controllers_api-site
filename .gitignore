@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-*config.py
+configuration/config.py
 *vk_config.v2.json
 *test.py
 *.idea

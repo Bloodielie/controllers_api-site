@@ -1,9 +1,9 @@
 from utils.get import get_post_wall, get_comment_data
 from utils.validation import cleaning_post, validation_bus_stop, cleaning_post_otherwise
-from config import update_time
+from configuration.config import update_time
 from asyncio import sleep
 from utils.utils import get_max_value_bd
-from config import id_groups
+from configuration.config_variables import id_groups
 import re
 from vk_api import VkApi
 from orm import Model
