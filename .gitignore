@@ -130,5 +130,4 @@ dmypy.json
 
 configuration/config.py
 *vk_config.v2.json
-*test.py
 *.idea

@@ -18,7 +18,7 @@ vk.auth()
 app = FastAPI(
     title="AntiContollerApi",
     description="I give you information about controllers in the cities of Belarus",
-    version="0.1.2",
+    version="0.1.3",
     openapi_url="/api/v1/openapi.json"
     )
 
