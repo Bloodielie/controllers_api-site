@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Choice parameters{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="display-2 mb-5" style="text-align: center">Choose your options</h1>
+    <form method="POST" action="{{ request.url }}">
+        <div>
+            <select class="form-control" id="exampleFormControlSelect1" name="transport_number">
+                {% for bus_stop in bus_stops %}
+                    <option value="{{ bus_stop }}">{{ bus_stop }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <span class="h4 mt-3">Список:</span>
+        <div class="custom-control custom-radio mt-1">
+          <input type="radio" id="dirty" name="dirty_or_clear" class="custom-control-input" value="dirty" required>
+          <label class="custom-control-label" for="dirty">Dirty</label>
+        </div>
+        <div class="custom-control custom-radio mb-3">
+          <input type="radio" id="clear" name="dirty_or_clear" class="custom-control-input" value="clean" required>
+          <label class="custom-control-label" for="clear">Clear</label>
+        </div>
+        <span class="h4 mt-2">Сортировка:</span>
+        <div class="custom-control custom-radio mt-1">
+          <input type="radio" id="sort_time" name="sort" class="custom-control-input" value="Время" required>
+          <label class="custom-control-label" for="sort_time">Время</label>
+        </div>
+        <div class="custom-control custom-radio mb-3">
+          <input type="radio" id="sort_message" name="sort" class="custom-control-input" value="Сообщения" required>
+          <label class="custom-control-label" for="sort_message">Сообщения</label>
+        </div>
+        <div>
+            <label for="time-input">Время отбора постов</label>
+            <input type="range" class="custom-range" min="1" max="100001" step="1000" id="time-input" name="text">
+        </div>
+        <input type="submit" value="Обновить" class="btn btn-info btn-lg btn-block">
+    </form>
+{% endblock %}

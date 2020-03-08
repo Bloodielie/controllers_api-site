@@ -1,25 +1,37 @@
-from sqlalchemy import desc
-from configuration.config_variables import list_bus_stop
 from time import time as tm
+from typing import Union
+
+from .db import get_city_data
 from .validation import sort_busstop
+from configuration.config_variables import id_groups, list_bus_stop
 
 
-async def get_max_value_bd(model, value):
-    selection = model.objects.build_select_expression().order_by(desc(value))
-    max_value_bd = await model.__database__.execute(selection)
-    response = await model.objects.get(id=max_value_bd)
-    return response[value]
+def get_transport_stop(city: str, type_transport: str) -> dict:
+    transport_stop: list = list_bus_stop.get(city)
+    if type_transport == 'bus':
+        transport_stop: dict = transport_stop[0]
+    else:
+        transport_stop: dict = transport_stop[1]
+    return transport_stop
 
 
-async def get_city_data(city: str, type_geter: str, _time: int, writers: dict):
-    city = city.lower()
-    db_class = writers.get(city)
-    if not db_class:
-        return [{'bus_stop': 'Wrong city', 'time': 228}]
-    elif type_geter == 'dirty':
-        return await db_class[0].objects.filter(time__gte=_time).all()
-    elif type_geter == 'clean':
-        return await db_class[1].objects.filter(time__gte=_time).all()
+def get_transport_number_city(city: str, type_transport: str):
+    return get_transport_stop(city, type_transport).keys()
+
+
+def get_busstop_transport(city: str, type_transport: str, transport_number: str) -> Union[str, list]:
+    bus_stop: list = get_transport_stop(city, type_transport).get(transport_number)
+    if not bus_stop:
+        return f"{transport_number} is not in the database"
+    return bus_stop
+
+
+def get_busstop_city(city: str):
+    return id_groups.get(city)[1]
+
+
+def optional_parameters(time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M'):
+    return time, sort, time_format
 
 
 def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) -> dict:
@@ -49,3 +61,8 @@ async def bus_stop_data(time: int, city: str, selection_bus_stop: str, sort: str
     unix_time: int = int(tm()) - time
     data: tuple = await get_city_data(city, selection_bus_stop, unix_time, writers)
     return sort_busstop(data=data, _sort=sort, time_format=time_format)
+
+
+async def get_data_about_transport(time: int, city: str, selection_bus_stop: str, transport_number: str, writers: dict, sort: str, type_transport: str, time_format: str):
+    data: dict = await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
+    return check_bus(city, type_transport, data, transport_number, sort)

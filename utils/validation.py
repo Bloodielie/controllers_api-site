@@ -1,6 +1,7 @@
-from configuration.config import clean_dirty_word, clean_clean_word
 from datetime import datetime
 from typing import Tuple
+
+from configuration.config import clean_dirty_word, clean_clean_word
 
 
 def cleaning_words(string: str) -> str:
