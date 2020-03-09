@@ -59,10 +59,10 @@ def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) 
 
 async def bus_stop_data(time: int, city: str, selection_bus_stop: str, sort: str, time_format: str, writers: dict) -> dict:
     unix_time: int = int(tm()) - time
-    data: tuple = await get_city_data(city, selection_bus_stop, unix_time, writers)
+    data: list = await get_city_data(city, selection_bus_stop, unix_time, writers)
     return sort_busstop(data=data, _sort=sort, time_format=time_format)
 
 
-async def get_data_about_transport(time: int, city: str, selection_bus_stop: str, transport_number: str, writers: dict, sort: str, type_transport: str, time_format: str):
+async def get_data_about_transport(time: int, city: str, selection_bus_stop: str, transport_number: str, writers: dict, sort: str, type_transport: str, time_format: str) -> dict:
     data: dict = await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
     return check_bus(city, type_transport, data, transport_number, sort)

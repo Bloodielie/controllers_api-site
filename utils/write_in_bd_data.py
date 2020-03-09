@@ -14,7 +14,7 @@ class Writer:
     def __init__(self, vk: VkApi):
         self.vk = vk
 
-    async def write_in_database(self, model: Model):
+    async def write_in_database(self, model: Model) -> None:
         name_class: str = model.__name__.lower()
         data_utils = DataGetter(name_class)
         while True:

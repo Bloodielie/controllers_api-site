@@ -50,7 +50,7 @@ async def create_account(request: Request):
     id = (await UserRepository().get_user_by_name(username))['id']
     origin = request.headers['origin']
     url = f'{origin}/user/valid?id={id}'
-    send_email(request.state.server_email, email, url)
+    send_email(email, url)
 
     access_token = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = jsonable_encoder(access_token)

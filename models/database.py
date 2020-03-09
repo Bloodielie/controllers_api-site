@@ -38,32 +38,32 @@ class AbstractBusStop(orm.Model):
     time = orm.Integer()
 
 
-class BusStopDirty_Brest(AbstractBusStop):
+class BusStopDirtyBrest(AbstractBusStop):
     __tablename__ = tb_name_brest_dirty
     __metadata__ = metadata
 
 
-class BusStopClear_Brest(AbstractBusStop):
+class BusStopClearBrest(AbstractBusStop):
     __tablename__ = tb_name_brest_clean
     __metadata__ = metadata
 
 
-class BusStopDirty_Grodno(AbstractBusStop):
+class BusStopDirtyGrodno(AbstractBusStop):
     __tablename__ = tb_name_grodno_dirty
     __metadata__ = metadata
 
 
-class BusStopClear_Grodno(AbstractBusStop):
+class BusStopClearGrodno(AbstractBusStop):
     __tablename__ = tb_name_grodno_clean
     __metadata__ = metadata
 
 
-class BusStopDirty_Gomel(AbstractBusStop):
+class BusStopDirtyGomel(AbstractBusStop):
     __tablename__ = tb_name_gomel_dirty
     __metadata__ = metadata
 
 
-class BusStopClear_Gomel(AbstractBusStop):
+class BusStopClearGomel(AbstractBusStop):
     __tablename__ = tb_name_gomel_clean
     __metadata__ = metadata
 

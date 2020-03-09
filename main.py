@@ -2,7 +2,7 @@ import asyncio
 import vk_api
 
 from configuration.config import login_vk, password_vk
-from configuration.config_variables import writers, state_transort
+from configuration.config_variables import writers
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -48,8 +48,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 user_repository = UserRepository()
 
-server_email = smtplib.SMTP('smtp.gmail.com', 587)
-
 origins = [
     "*"
 ]
@@ -69,20 +67,8 @@ async def startup() -> None:
         data = writers.get(wr)
         for info in data:
             asyncio.create_task(Writer(vk).write_in_database(info))
-    server_email.starttls()
-    server_email.login(login_email, password_email)
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await database.disconnect()
-    server_email.quit()
-
-
-@app.middleware("http")
-async def add_state_transport(request: Request, call_next):
-    for key, value in state_transort.items():
-        setattr(request.state, key, value)
-    request.state.server_email = server_email
-    response = await call_next(request)
-    return response

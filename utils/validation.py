@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Union
 
 from configuration.config import clean_dirty_word, clean_clean_word
 
@@ -43,7 +43,7 @@ def validation_bus_stop(data: tuple, stop_bus: list) -> list:
     return temp_data
 
 
-def sort_busstop(data: tuple, _sort=None, time_format: str = '%H:%M') -> dict:
+def sort_busstop(data: Union[list, tuple], _sort=None, time_format: str = '%H:%M') -> dict:
     """ Сортировка генератора по определенному критерию """
     time_data: dict = {}
     for date in data:

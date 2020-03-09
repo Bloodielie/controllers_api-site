@@ -38,14 +38,10 @@ class UserRepository:
         except orm.exceptions.NoMatch:
             return None
 
-    async def is_user_exists(self, email: str, user_name: str):
+    async def is_user_exists(self, email: str, user_name: str) -> bool:
         try:
             await self.get_user_by_name(user_name)
             await self.get_user_by_email(email)
             return True
         except orm.exceptions.NoMatch:
             return False
-
-    #@property
-    #def get_model(self):
-    #    return self.model

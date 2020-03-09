@@ -16,9 +16,9 @@ password_email: str = config('password_email', cast=str)
 
 url_bd: str = config('url_bd', cast=str)
 
-path_to_json = '../fastapi/json'
+templates = Jinja2Templates(directory="templates")
 
-templates = Jinja2Templates(directory="../fastapitest — копия/templates")
+path_to_json = 'json'
 
 stop_bus_brest: list = get_json(f'{path_to_json}/stopbus_brest.json')
 stop_bus_gomel: list = get_json(f'{path_to_json}/stopbus_gomel.json')

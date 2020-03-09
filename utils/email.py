@@ -11,11 +11,14 @@ msg['From'] = login_email
 msg['Subject'] = 'Аунтефикация!!!'
 
 
-def send_email(server, addr_to, url_authentication):
+def send_email(addr_to, url_authentication) -> None:
+    server_email = smtplib.SMTP('smtp.gmail.com', 587)
+    server_email.starttls()
     msg['To'] = addr_to
     body = url_authentication
     msg.attach(MIMEText(body, 'plain'))
-    server.send_message(msg)
+    server_email.send_message(msg)
+    server_email.quit()
 
 
 def email_validation(address) -> Union[None, str]:

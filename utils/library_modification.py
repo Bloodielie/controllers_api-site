@@ -12,7 +12,7 @@ class Router(APIRouter):
         self._routers = _routers
         self.include_routers()
 
-    def include_routers(self):
+    def include_routers(self) -> None:
         for router in self._routers:
             if self.include_in_schema:
                 self.add_api_route(path=router[0], endpoint=router[1], **router[2])
