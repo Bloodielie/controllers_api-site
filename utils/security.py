@@ -1,20 +1,25 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-import jwt
-from jwt import PyJWTError
-from fastapi import Depends
-from fastapi.security.utils import get_authorization_scheme_param
-from starlette.requests import Request
-from models.database import User
-import orm
 from typing import Union
 
+from configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+
+import jwt
+from jwt import PyJWTError
+
+from fastapi import Depends
+from fastapi.security.utils import get_authorization_scheme_param
+
+from starlette.requests import Request
+from starlette.responses import Response
+
+from user.models import User
+import orm
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def add_cookie(response, token, max_age) -> None:
+def add_cookie(response: Response, token: str, max_age: int) -> None:
     response.set_cookie(
         "Authorization",
         value=f"Bearer {token}",
@@ -51,15 +56,15 @@ def authorization_check(request: Request) -> Union[str, None]:
     return param
 
 
-def verify_password(plain_password, hashed_password) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password) -> str:
+def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(user, password: str):
+def authenticate_user(user: orm.models, password: str):
     # user <class 'models.database.User'>
     if not user:
         return False

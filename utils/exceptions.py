@@ -1,4 +1,3 @@
-
 class RequiresLoginException(Exception):
     pass
 

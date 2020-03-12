@@ -9,14 +9,15 @@ from utils.utils import get_data_about_transport, get_transport_number_city
 from .dependency import verify_city
 
 from configuration.config import templates
+from typing import Union
 
 
-async def show_city_choice(request: Request):
+async def show_city_choice(request: Request) -> templates.TemplateResponse:
     cities: list = [city for city in list_bus_stop.keys()]
     return templates.TemplateResponse("transport/main.html", {"request": request, 'cities': cities})
 
 
-async def city_choice(request: Request):
+async def city_choice(request: Request) -> Union[templates.TemplateResponse, RedirectResponse]:
     form_data: FormData = await request.form()
     city: str = form_data.get('city')
     selected_transport: str = form_data.get('transport_type')
@@ -24,7 +25,8 @@ async def city_choice(request: Request):
     return response
 
 
-async def show_transport_parameters_choice(request: Request, verify=Depends(verify_city)):
+async def show_transport_parameters_choice(request: Request, verify=Depends(verify_city)) -> Union[templates.TemplateResponse,
+                                                                                                   RedirectResponse]:
     if verify:
         city = request.path_params.get('city')
         selected_transport = request.query_params.get('selected_transport')
@@ -34,7 +36,7 @@ async def show_transport_parameters_choice(request: Request, verify=Depends(veri
     return RedirectResponse(url=request.url_for('city_choice'), status_code=303)
 
 
-async def transport_parameters_choice(request: Request, verify=Depends(verify_city)):
+async def transport_parameters_choice(request: Request, verify=Depends(verify_city)) -> RedirectResponse:
     if verify:
         city = request.path_params['city']
         selected_transport: str = request.query_params.get('selected_transport')
@@ -45,11 +47,12 @@ async def transport_parameters_choice(request: Request, verify=Depends(verify_ci
         time = form_data.get('text')
         selection_bus_stop = form_data.get('dirty_or_clear')
         sort = form_data.get('sort')
-        return RedirectResponse(f'{city}/{transport_number}?time={time}&sort={sort}&selection_bus_stop={selection_bus_stop}&selected_transport={selected_transport}', status_code=303)
+        return RedirectResponse(f'{city}/{transport_number}?time={time}&sort={sort}&selection_bus_stop={selection_bus_stop}'
+                                f'&selected_transport={selected_transport}', status_code=303)
     return RedirectResponse(url=request.url_for('city_choice'), status_code=303)
 
 
-async def transport_view(request: Request, verify=Depends(verify_city)):
+async def transport_view(request: Request, verify=Depends(verify_city)) -> Union[templates.TemplateResponse, RedirectResponse]:
     if verify:
         city = request.path_params['city']
         selected_transport: str = request.query_params.get('selected_transport')
@@ -67,6 +70,8 @@ async def transport_view(request: Request, verify=Depends(verify_city)):
         transport_number = request.path_params['transport_number']
         transport_number = transport_number if transport_number in get_transport_number_city(city, selected_transport) else '12A'
 
-        data: dict = await get_data_about_transport(time, city, selection_bus_stop, transport_number, writers, sort, selected_transport, '%H:%M')
-        return templates.TemplateResponse("transport/transport_table.html", {"request": request, 'data': data, 'transport_number': transport_number})
+        data: dict = await get_data_about_transport(time, city, selection_bus_stop, transport_number, writers, sort, selected_transport,
+                                                    '%H:%M')
+        return templates.TemplateResponse("transport/transport_table.html", {"request": request, 'data': data,
+                                                                             'transport_number': transport_number})
     return RedirectResponse(url=request.url_for('city_choice'), status_code=303)

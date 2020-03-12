@@ -11,9 +11,10 @@ msg['From'] = login_email
 msg['Subject'] = 'Аунтефикация!!!'
 
 
-def send_email(addr_to, url_authentication) -> None:
+def send_email(addr_to: str, url_authentication: str) -> None:
     server_email = smtplib.SMTP('smtp.gmail.com', 587)
     server_email.starttls()
+    server_email.login(login_email, password_email)
     msg['To'] = addr_to
     body = url_authentication
     msg.attach(MIMEText(body, 'plain'))
@@ -21,7 +22,7 @@ def send_email(addr_to, url_authentication) -> None:
     server_email.quit()
 
 
-def email_validation(address) -> Union[None, str]:
+def email_validation(address: str) -> Union[None, str]:
     pattern = re.compile(r'^(\w+)@(\w+\.\w+)$')
     is_valid = pattern.match(address)
     if is_valid:

@@ -1,4 +1,4 @@
-from models.database import BusStopDirtyBrest, BusStopClearBrest, BusStopDirtyGomel, BusStopClearGomel, BusStopDirtyGrodno, BusStopClearGrodno
+from models import BusStopDirtyBrest, BusStopClearBrest, BusStopDirtyGomel, BusStopClearGomel, BusStopDirtyGrodno, BusStopClearGrodno
 from .config import brestbus_stop, trolleybusesstop_brest, gomelbus_stop, trolleybusesstop_gomel, grodnobus_stop, trolleybusesstop_grodno, stop_bus_brest, stop_bus_gomel, \
     stop_bus_grodno
 

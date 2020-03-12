@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from typing import Union
 
-from models.enum import City, BusStopSelection, TransportType
+from .enum import City, BusStopSelection, TransportType
 from configuration.config_variables import writers
-from utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, get_transport_number_city, bus_stop_data
+from utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data
 
 router = APIRouter()
 
