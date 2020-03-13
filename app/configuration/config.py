@@ -1,4 +1,4 @@
-from utils.json import get_json
+from app.utils.json import get_json
 from starlette.config import Config
 from starlette.templating import Jinja2Templates
 from databases import Database
@@ -18,13 +18,12 @@ password_email: str = config('password_email', cast=str)
 
 url_bd: str = config('url_bd', cast=str)
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/templates")
 
-path_to_json = 'configuration/json'
+path_to_json = 'app/configuration/json'
 
 database = Database(url_bd)
 metadata = sqlalchemy.MetaData()
-
 stop_bus_brest: list = get_json(f'{path_to_json}/stopbus_brest.json')
 stop_bus_gomel: list = get_json(f'{path_to_json}/stopbus_gomel.json')
 stop_bus_grodno: list = get_json(f'{path_to_json}/stopbus_grodno.json')

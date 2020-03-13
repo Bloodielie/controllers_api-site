@@ -1,12 +1,12 @@
 from fastapi import Depends, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 
-from utils.security import get_current_user, verify_password, authenticate_user, create_access_token, get_password_hash, add_cookie
-from utils.email import email_validation, send_email
+from app.utils.security import get_current_user, verify_password, authenticate_user, create_access_token, get_password_hash, add_cookie
+from app.utils.email import email_validation, send_email
 
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
-from configuration.config import ACCESS_TOKEN_EXPIRE_MINUTES, templates
+from app.configuration.config import ACCESS_TOKEN_EXPIRE_MINUTES, templates
 
 from .pydantic_models import User
 from .user_repository import UserRepository

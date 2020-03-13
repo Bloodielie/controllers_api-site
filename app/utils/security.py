@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Union
 
-from configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 import jwt
 from jwt import PyJWTError
@@ -13,7 +13,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette.requests import Request
 from starlette.responses import Response
 
-from user.models import User
+from app.user.models import User
 import orm
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

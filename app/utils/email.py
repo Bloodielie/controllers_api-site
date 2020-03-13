@@ -1,4 +1,4 @@
-from configuration.config import login_email, password_email
+from app.configuration.config import login_email, password_email
 from typing import Union
 import re
 

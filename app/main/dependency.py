@@ -1,5 +1,5 @@
 from starlette.requests import Request
-from utils.exceptions import RequiresLoginException, RequiresSystemException
+from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
 
 def redirect_if_authorization(request: Request):

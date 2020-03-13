@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from typing import Union
 
 from .enum import City, BusStopSelection, TransportType
-from configuration.config_variables import writers
-from utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data
+from app.configuration.config_variables import writers
+from app.utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data
 
 router = APIRouter()
 
@@ -33,9 +33,3 @@ async def bus_stop_transport(city: City, selection_bus_stop: BusStopSelection, t
     """Gives information about a particular bus in a certain city"""
     time, sort, time_format = optional_data
     return await get_data_about_transport(time, city, selection_bus_stop, transport_number, writers, sort, transport_type, time_format)
-
-
-#@router.get("/{city}/{transport_type}")
-#async def get_transport_number_cities(city: City, transport_type: TransportType) -> list:
-#    """ Gives a list of available buses """
-#    return list(get_transport_number_city(city, transport_type))

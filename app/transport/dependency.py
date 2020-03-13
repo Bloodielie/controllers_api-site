@@ -1,5 +1,5 @@
 from starlette.requests import Request
-from configuration.config_variables import list_bus_stop
+from app.configuration.config_variables import list_bus_stop
 
 
 def verify_city(request: Request) -> bool:

@@ -3,12 +3,12 @@ from starlette.responses import RedirectResponse
 from starlette.datastructures import FormData
 from fastapi import Depends
 
-from configuration.config_variables import list_bus_stop, writers
+from app.configuration.config_variables import list_bus_stop, writers
 
-from utils.utils import get_data_about_transport, get_transport_number_city
+from app.utils.utils import get_data_about_transport, get_transport_number_city
 from .dependency import verify_city
 
-from configuration.config import templates
+from app.configuration.config import templates
 from typing import Union
 
 

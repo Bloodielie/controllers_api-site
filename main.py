@@ -1,22 +1,21 @@
 import asyncio
 import vk_api
 
-from configuration.config import login_vk, password_vk, metadata, database
-from configuration.config_variables import writers
+from app.configuration.config import login_vk, password_vk, metadata, database
+from app.configuration.config_variables import writers
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from utils.write_in_bd_data import Writer
-from models import *
+from app.utils.write_in_bd_data import Writer
 
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
 
 from starlette.responses import RedirectResponse
-from utils.exceptions import RequiresLoginException, RequiresSystemException
+from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
-import urls
+from app.main import urls
 import sqlalchemy
 
 vk = vk_api.VkApi(login=login_vk, password=password_vk)
@@ -42,7 +41,7 @@ async def exception_handler(request: Request, exc: RequiresSystemException):
 
 
 app.include_router(urls.app)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 origins = [
     "*"

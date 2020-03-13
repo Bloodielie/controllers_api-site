@@ -1,5 +1,5 @@
 import orm
-from configuration.config import metadata, database
+from app.configuration.config import metadata, database
 
 
 class UserInfo(orm.Model):

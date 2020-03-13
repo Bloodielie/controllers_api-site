@@ -1,5 +1,5 @@
 import orm
-from configuration.config import tb_name_brest_dirty, tb_name_brest_clean, tb_name_gomel_dirty, tb_name_gomel_clean, tb_name_grodno_dirty, tb_name_grodno_clean, database, metadata
+from app.configuration.config import tb_name_brest_dirty, tb_name_brest_clean, tb_name_gomel_dirty, tb_name_gomel_clean, tb_name_grodno_dirty, tb_name_grodno_clean, database, metadata
 
 
 class AbstractBusStop(orm.Model):

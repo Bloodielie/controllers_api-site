@@ -1,5 +1,5 @@
 from . import views
-from utils.library_modification import route, Router
+from app.utils.library_modification import route, Router
 
 auth_routers = [
     route('/logout', views.logout_and_remove_cookie, methods=['GET'], name='logout'),
