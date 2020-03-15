@@ -48,6 +48,21 @@ def cookie_check(request: Request) -> Union[str, None]:
     return param
 
 
+async def get_current_user(token=Depends(cookie_check)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+    except PyJWTError:
+        return None
+    try:
+        user = await User.objects.get(user_name=username)
+    except orm.exceptions.NoMatch:
+        return None
+    return user
+
+
 def authorization_check(request: Request) -> Union[str, None]:
     authorization: str = request.cookies.get("Authorization")
     scheme, param = get_authorization_scheme_param(authorization)
@@ -82,18 +97,3 @@ def create_access_token(*, data: dict, minute: int = None) -> bytes:
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-
-async def get_current_user(token=Depends(cookie_check)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            return None
-    except PyJWTError:
-        return None
-    try:
-        user = await User.objects.get(user_name=username)
-    except orm.exceptions.NoMatch:
-        return None
-    return user

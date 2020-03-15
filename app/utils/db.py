@@ -3,6 +3,7 @@ from orm import models
 
 
 async def get_max_value_bd(model: models, value) -> int:
+    """ Getting the maximum value in the database """
     selection = model.objects.build_select_expression().order_by(desc(value))
     max_value_bd = await model.__database__.execute(selection)
     response = await model.objects.get(id=max_value_bd)
@@ -10,6 +11,7 @@ async def get_max_value_bd(model: models, value) -> int:
 
 
 async def get_city_data(city: str, type_getter: str, _time: int, writers: dict) -> list:
+    """ Getting information about the city """
     city = city.lower()
     db_class = writers.get(city)
     if not db_class:

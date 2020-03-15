@@ -2,7 +2,7 @@ from fastapi import Depends, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 
 from app.utils.security import get_current_user, verify_password, authenticate_user, create_access_token, get_password_hash, add_cookie
-from app.utils.email import email_validation, send_email
+from app.utils.email import Email
 
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
@@ -86,7 +86,7 @@ async def create_account(request: Request, background_tasks: BackgroundTasks) ->
     username: str = form_data.get('login')
     password: str = form_data.get('password')
     email: str = form_data.get('email')
-    if not email_validation(email):
+    if not Email.email_validation(email):
         return templates.TemplateResponse("user/create_account.html", {"request": request, 'not_valid_email': True})
     if await UserRepository.is_user_exists(email, username):
         return templates.TemplateResponse("user/create_account.html", {"request": request, 'user_exists': True})
@@ -96,7 +96,7 @@ async def create_account(request: Request, background_tasks: BackgroundTasks) ->
 
     id = (await UserRepository.get_user_by_name(username))['id']
     url = request.url_for('valid_email') + f'?id={id}'
-    background_tasks.add_task(send_email, email, url)
+    background_tasks.add_task(Email.send_email, email, url)
 
     access_token: bytes = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
     token: str = jsonable_encoder(access_token)

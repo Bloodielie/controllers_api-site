@@ -1,6 +1,6 @@
 from app.utils.get import get_post_wall, get_comment_data
 from app.utils.validation import cleaning_post, validation_bus_stop, cleaning_post_otherwise
-from app.configuration.config import update_time
+from app.configuration.config import UPDATE_TIME
 from asyncio import sleep
 from app.utils.db import get_max_value_bd
 from app.configuration.config_variables import id_groups
@@ -24,7 +24,7 @@ class Writer:
             data: list = validation_bus_stop(data_post, stop)
             datas: list = list(sorted(data, key=lambda x: x[1]))
             await self.write_data_bd(model, datas, 'time')
-            await sleep(update_time)
+            await sleep(UPDATE_TIME)
 
     @staticmethod
     async def write_data_bd(model: Model, data: list, column_name: str) -> None:

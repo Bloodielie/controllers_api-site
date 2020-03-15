@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterator
 
 from app.configuration.config import clean_dirty_word, clean_clean_word
 
@@ -8,24 +8,22 @@ def cleaning_words(string: str) -> str:
     return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '').lower()
 
 
-def cleaning_post(data: tuple) -> Tuple[str, int]:
+def cleaning_post(data: tuple) -> Iterator[Tuple[str, int]]:
     for date in data:
         word: str = cleaning_words(date[0])
         for iteration_value, word_data in enumerate(word.split()):
             if word_data in clean_dirty_word:
                 break
             if iteration_value >= len(word.split())-1:
-                temporary_tuple: tuple = (word, date[1])
-                yield temporary_tuple
+                yield word, date[1]
 
 
-def cleaning_post_otherwise(data: tuple) -> Tuple[str, int]:
+def cleaning_post_otherwise(data: tuple) -> Iterator[Tuple[str, int]]:
     for date in data:
         word: str = cleaning_words(date[0])
         for iteration_value, word_data in enumerate(word.split()):
             if word_data in clean_clean_word:
-                temporary_tuple: tuple = (word, date[1])
-                yield temporary_tuple
+                yield word, date[1]
                 break
 
 

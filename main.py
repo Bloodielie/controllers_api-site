@@ -1,44 +1,25 @@
 import asyncio
 import vk_api
-
-from app.configuration.config import login_vk, password_vk, metadata, database
-from app.configuration.config_variables import writers
-
+import sqlalchemy
 from fastapi import FastAPI
+from app.main import urls
+
 from starlette.middleware.cors import CORSMiddleware
-
-from app.utils.write_in_bd_data import Writer
-
 from starlette.requests import Request
 from starlette.staticfiles import StaticFiles
-
 from starlette.responses import RedirectResponse
+
+from app.configuration import config
+from app.configuration.config_variables import writers
+
+from app.utils.write_in_bd_data import Writer
 from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
-from app.main import urls
-import sqlalchemy
-
-vk = vk_api.VkApi(login=login_vk, password=password_vk)
+vk = vk_api.VkApi(login=config.LOGIN_VK, password=config.PASSWORD_VK)
 vk.auth()
 
-app = FastAPI(
-    title="AntiContollerApi",
-    description="I give you information about controllers in the cities of Belarus",
-    version="0.1.4",
-    openapi_url="/api/v1/openapi.json",
-    redoc_url=None
-    )
-
-
-@app.exception_handler(RequiresLoginException)
-async def exception_handler(request: Request, exc: RequiresLoginException):
-    return RedirectResponse(url=request.url_for('profile'), status_code=303)
-
-
-@app.exception_handler(RequiresSystemException)
-async def exception_handler(request: Request, exc: RequiresSystemException):
-    return RedirectResponse(url=request.url_for('login'), status_code=303)
-
+app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL,
+              redoc_url=config.REDOC_URL)
 
 app.include_router(urls.app)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -55,11 +36,21 @@ app.add_middleware(
 )
 
 
+@app.exception_handler(RequiresLoginException)
+async def exception_handler(request: Request, exc: RequiresLoginException):
+    return RedirectResponse(url=request.url_for('profile'), status_code=303)
+
+
+@app.exception_handler(RequiresSystemException)
+async def exception_handler(request: Request, exc: RequiresSystemException):
+    return RedirectResponse(url=request.url_for('login'), status_code=303)
+
+
 @app.on_event("startup")
 async def startup() -> None:
-    engine = sqlalchemy.create_engine(str(database.url))
-    metadata.create_all(engine)
-    await database.connect()
+    engine = sqlalchemy.create_engine(str(config.database.url))
+    config.metadata.create_all(engine)
+    await config.database.connect()
     for wr in writers:
         data = writers.get(wr)
         for info in data:
@@ -68,4 +59,4 @@ async def startup() -> None:
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
-    await database.disconnect()
+    await config.database.disconnect()
