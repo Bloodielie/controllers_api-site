@@ -3,15 +3,16 @@ from typing import Union
 
 from .enum import City, BusStopSelection, TransportType
 from app.configuration.config_variables import writers
-from app.utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data
+from app.utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data, \
+    get_stop_city
 
 router = APIRouter()
 
 
-@router.get("/{city}")
+@router.get("/{city}", name='get_city_bus_stop')
 async def get_bus_stop_city(city: City) -> list:
     """ Gives stops to a specific city """
-    return get_busstop_city(city)
+    return get_stop_city(city)
 
 
 @router.get("/{city}/{transport_type}/{transport_number}")

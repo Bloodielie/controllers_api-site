@@ -36,8 +36,9 @@ class UserRepository:
             return None
 
     @classmethod
-    async def get_two_model(cls, pk: int):
+    async def get_two_model(cls, first_model: User):
         try:
+            pk: int = first_model.user_info.pk
             return await cls.model_info.objects.get(id=pk)
         except orm.exceptions.NoMatch:
             return None

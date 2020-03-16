@@ -25,8 +25,8 @@ async def city_choice(request: Request) -> Union[templates.TemplateResponse, Red
     return response
 
 
-async def show_transport_parameters_choice(request: Request, verify=Depends(verify_city)) -> Union[templates.TemplateResponse,
-                                                                                                   RedirectResponse]:
+async def show_transport_parameters_choice(request: Request, verify=Depends(verify_city)) -> \
+        Union[templates.TemplateResponse, RedirectResponse]:
     if verify:
         city = request.path_params.get('city')
         selected_transport = request.query_params.get('selected_transport')

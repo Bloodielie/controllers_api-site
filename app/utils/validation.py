@@ -8,7 +8,7 @@ def cleaning_words(string: str) -> str:
     return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '').lower()
 
 
-def cleaning_post(data: tuple) -> Iterator[Tuple[str, int]]:
+def cleaning_post(data: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
     for date in data:
         word: str = cleaning_words(date[0])
         for iteration_value, word_data in enumerate(word.split()):
@@ -18,7 +18,7 @@ def cleaning_post(data: tuple) -> Iterator[Tuple[str, int]]:
                 yield word, date[1]
 
 
-def cleaning_post_otherwise(data: tuple) -> Iterator[Tuple[str, int]]:
+def cleaning_post_otherwise(data: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
     for date in data:
         word: str = cleaning_words(date[0])
         for iteration_value, word_data in enumerate(word.split()):
@@ -27,7 +27,7 @@ def cleaning_post_otherwise(data: tuple) -> Iterator[Tuple[str, int]]:
                 break
 
 
-def validation_bus_stop(data: tuple, stop_bus: list) -> list:
+def validation_bus_stop(data: Iterator[tuple], stop_bus: list) -> list:
     """ Поиск остановки в строчке"""
     temp_data = []
     for _data in data:
@@ -43,7 +43,7 @@ def validation_bus_stop(data: tuple, stop_bus: list) -> list:
 
 def sort_busstop(data: Union[list, tuple], _sort=None, time_format: str = '%H:%M') -> dict:
     """ Сортировка генератора по определенному критерию """
-    time_data: dict = {}
+    time_data = {}
     for date in data:
         if date['bus_stop'] not in time_data:
             time_data.update({date['bus_stop']: [1, datetime.fromtimestamp(date['time']).strftime(time_format)]})

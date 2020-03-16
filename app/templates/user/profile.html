@@ -16,9 +16,11 @@
             </div>
             <div>
                 <a href="{{ request.url_for('logout') }}">Выйти из аккаунта</a>
+                <a href="{{ request.url_for('refresh_password') }}">Поменять пароль</a>
+                <a href="{{ request.url_for('add_bus_stop') }}">Добавить остановку</a>
             </div>
         </div>
     {% else %}
-        <p>Подтвердите вашу почту!!!</p>
+        <p style="text-align: center">Подтвердите вашу почту!!!</p>
     {% endif %}
 {% endblock %}

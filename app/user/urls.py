@@ -6,7 +6,9 @@ auth_routers = [
     route('/valid', views.valid_email, methods=['GET'], name='valid_email'),
     route('/refresh_password', views.show_refresh_password, methods=['GET'], name='refresh_password'),
     route('/refresh_password', views.refresh_password, methods=['POST']),
-    route('/profile', views.profile, methods=['GET'], name='profile')
+    route('/profile', views.profile, methods=['GET'], name='profile'),
+    route('/bus_stop', views.show_bus_stop_info, methods=['GET'], name='add_bus_stop'),
+    route('/bus_stop', views.add_bus_stop_info, methods=['POST']),
 ]
 
 no_auth_routers = [

@@ -36,6 +36,7 @@ def cookie_check(request: Request) -> Union[str, None]:
         cookie_authorization
     )
 
+    scheme = ''
     if cookie_scheme.lower() == "bearer":
         authorization = True
         scheme = cookie_scheme

@@ -3,7 +3,16 @@ from typing import Union
 
 from .db import get_city_data
 from .validation import sort_busstop
-from app.configuration.config_variables import id_groups, list_bus_stop
+from app.configuration.config_variables import list_bus_stop
+
+
+def get_stop_city(city: str) -> list:
+    bus_stops_dict: list = get_busstop_city(city)
+    bus_stop = []
+    for bus_stop_dict in bus_stops_dict:
+        for bus_stop_list in bus_stop_dict.values():
+            bus_stop.append(bus_stop_list[0])
+    return list(set(bus_stop))
 
 
 def get_transport_stop(city: str, type_transport: str) -> dict:
@@ -27,7 +36,7 @@ def get_busstop_transport(city: str, type_transport: str, transport_number: str)
 
 
 def get_busstop_city(city: str):
-    return id_groups.get(city)[1]
+    return list_bus_stop.get(city)
 
 
 def optional_parameters(time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M'):
@@ -63,6 +72,7 @@ async def bus_stop_data(time: int, city: str, selection_bus_stop: str, sort: str
     return sort_busstop(data=data, _sort=sort, time_format=time_format)
 
 
-async def get_data_about_transport(time: int, city: str, selection_bus_stop: str, transport_number: str, writers: dict, sort: str, type_transport: str, time_format: str) -> dict:
+async def get_data_about_transport(time: int, city: str, selection_bus_stop: str, transport_number: str, writers: dict, sort: str,
+                                   type_transport: str, time_format: str) -> dict:
     data: dict = await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
     return check_bus(city, type_transport, data, transport_number, sort)
