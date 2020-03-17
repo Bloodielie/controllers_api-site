@@ -49,7 +49,7 @@ async def refresh_password(request: Request, user=Depends(get_current_user)) -> 
     if verify_password(old_password, user.hashed_password):
         new_password_hash: str = get_password_hash(new_password)
         await user.update(hashed_password=new_password_hash)
-        return RedirectResponse(url="/docs", status_code=303)
+        return RedirectResponse(url=request.url_for('profile'), status_code=303)
     return RedirectResponse(url=request.url_for('refresh_password_get'), status_code=303)
 
 
