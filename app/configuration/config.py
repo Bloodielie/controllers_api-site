@@ -19,8 +19,7 @@ ALGORITHM = config('ALGORITHM', cast=str)
 ACCESS_TOKEN_EXPIRE_MINUTES = 7200
 
 # VK
-LOGIN_VK: str = config('login_vk', cast=str)
-PASSWORD_VK: str = config('password_vk', cast=str)
+TOKEN_VK: str = config('token', cast=str)
 
 # EMAIL
 LOGIN_EMAIL: str = config('login_email', cast=str)

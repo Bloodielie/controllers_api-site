@@ -1,5 +1,4 @@
 import asyncio
-import vk_api
 import sqlalchemy
 from fastapi import FastAPI
 from app.main import urls
@@ -15,8 +14,9 @@ from app.configuration.config_variables import writers
 from app.utils.write_in_bd_data import Writer
 from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
-vk = vk_api.VkApi(login=config.LOGIN_VK, password=config.PASSWORD_VK)
-vk.auth()
+from app.utils.vk_api import VkApi
+
+vk = VkApi(token=config.TOKEN_VK)
 
 app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL,
               redoc_url=config.REDOC_URL)
@@ -52,6 +52,7 @@ async def startup() -> None:
     for wr in writers:
         data = writers.get(wr)
         for info in data:
+            await asyncio.sleep(0.5)
             asyncio.create_task(Writer(vk).write_in_database(info))
 
 

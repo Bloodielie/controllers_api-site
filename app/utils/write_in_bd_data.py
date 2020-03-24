@@ -7,7 +7,7 @@ from app.configuration.config_variables import id_groups
 import re
 from vk_api import VkApi
 from orm import Model
-from typing import Tuple, Iterator
+from typing import Iterator
 
 
 class Writer:
@@ -18,7 +18,7 @@ class Writer:
         name_class: str = model.__name__.lower()
         data_utils = DataGetter(name_class)
         while True:
-            vk_post: Iterator[tuple] = data_utils.get_rewrite_post(self.vk)
+            vk_post: list = await data_utils.get_rewrite_post(self.vk)
             data_post = data_utils.get_cleaning_post(vk_post)
             stop: list = data_utils.get_bus_stop()
             data: list = validation_bus_stop(data_post, stop)
@@ -38,12 +38,12 @@ class DataGetter:
     def __init__(self, name_class: str):
         self.name_class = name_class
 
-    def get_rewrite_post(self, vk: VkApi) -> Iterator[Tuple[str, int]]:
+    async def get_rewrite_post(self, vk):
         id_group: int = self.__get_id_group()
         if self.name_class.find('gomel') != -1:
-            return get_comment_data(vk, id_group)
+            return await get_comment_data(vk, id_group)
         else:
-            return get_post_wall(vk, id_group)
+            return await get_post_wall(vk, id_group)
 
     def get_bus_stop(self) -> list:
         for key_city in id_groups.keys():
@@ -61,7 +61,7 @@ class DataGetter:
             else:
                 return id_groups.get(city_name[0])[0]
 
-    def get_cleaning_post(self, vk_post: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
+    def get_cleaning_post(self, vk_post: list) -> Iterator[tuple]:
         if self.name_class.find('dirty') != -1:
             return cleaning_post(vk_post)
         else:
