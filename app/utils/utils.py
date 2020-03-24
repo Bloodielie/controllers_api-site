@@ -6,6 +6,10 @@ from .validation import sort_busstop
 from app.configuration.config_variables import list_bus_stop
 
 
+def optional_parameters(time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M'):
+    return time, sort, time_format
+
+
 def get_stop_city(city: str) -> list:
     bus_stops_dict: list = get_busstop_city(city)
     bus_stop = []
@@ -37,10 +41,6 @@ def get_busstop_transport(city: str, type_transport: str, transport_number: str)
 
 def get_busstop_city(city: str):
     return list_bus_stop.get(city)
-
-
-def optional_parameters(time: int = 3600, sort: str = 'Время', time_format: str = '%H:%M'):
-    return time, sort, time_format
 
 
 def check_bus(city: str, type_bus: str, data: dict, bus_number: str, sort: str) -> dict:

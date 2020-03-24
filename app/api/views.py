@@ -3,8 +3,7 @@ from typing import Union
 
 from .enum import City, BusStopSelection, TransportType
 from app.configuration.config_variables import writers
-from app.utils.utils import optional_parameters, get_data_about_transport, get_busstop_city, get_busstop_transport, bus_stop_data, \
-    get_stop_city
+from app.utils.utils import optional_parameters, get_data_about_transport, get_busstop_transport, bus_stop_data, get_stop_city
 
 router = APIRouter()
 

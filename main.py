@@ -24,9 +24,7 @@ app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config
 app.include_router(urls.app)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-origins = [
-    "*"
-]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
