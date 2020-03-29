@@ -5,13 +5,13 @@ from asyncio import sleep
 from app.utils.db import get_max_value_bd
 from app.configuration.config_variables import id_groups
 import re
-from vk_api import VkApi
 from orm import Model
 from typing import Iterator
+from app.utils import vk_api
 
 
 class Writer:
-    def __init__(self, vk: VkApi):
+    def __init__(self, vk: vk_api.VkApi):
         self.vk = vk
 
     async def write_in_database(self, model: Model) -> None:

@@ -15,6 +15,8 @@ from app.utils.write_in_bd_data import Writer
 from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
 from app.utils.vk_api import VkApi
+import uvicorn
+import os
 
 vk = VkApi(token=config.TOKEN_VK)
 
@@ -59,3 +61,7 @@ async def startup() -> None:
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await config.database.disconnect()
+
+if __name__ == "__main__":
+    port = os.environ.get('PORT', 5000)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, log_level="info")
