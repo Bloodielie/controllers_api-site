@@ -54,7 +54,7 @@ async def startup() -> None:
     for wr in writers:
         data = writers.get(wr)
         for info in data:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(2)
             asyncio.create_task(Writer(vk).write_in_database(info))
 
 
