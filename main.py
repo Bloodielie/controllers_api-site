@@ -64,4 +64,6 @@ async def shutdown() -> None:
 
 if __name__ == "__main__":
     port = os.environ.get('PORT')
+    print(port)
+    print(type(port))
     uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")

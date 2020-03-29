@@ -1,13 +1,17 @@
 from sqlalchemy import desc
-from orm import models
+from orm import models, exceptions
 
 
 async def get_max_value_bd(model: models, value) -> int:
     """ Getting the maximum value in the database """
     selection = model.objects.build_select_expression().order_by(desc(value))
     max_value_bd = await model.__database__.execute(selection)
-    response = await model.objects.get(id=max_value_bd)
-    return response[value]
+    try:
+        response = await model.objects.get(id=max_value_bd)
+        print(response[value])
+        return response[value]
+    except exceptions.NoMatch:
+        return 1500500845
 
 
 async def get_city_data(city: str, type_getter: str, _time: int, writers: dict) -> list:
