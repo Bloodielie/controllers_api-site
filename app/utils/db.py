@@ -8,7 +8,6 @@ async def get_max_value_bd(model: models, value) -> int:
     max_value_bd = await model.__database__.execute(selection)
     try:
         response = await model.objects.get(id=max_value_bd)
-        print(response[value])
         return response[value]
     except exceptions.NoMatch:
         return 1500500845

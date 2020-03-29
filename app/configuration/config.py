@@ -27,7 +27,7 @@ PASSWORD_EMAIL: str = config('password_email', cast=str)
 
 # DATABASE
 URL_BD: str = config('url_bd', cast=str)
-database = Database(URL_BD)
+database = Database(URL_BD, min_size=1, max_size=1)
 metadata = sqlalchemy.MetaData()
 tb_name_brest_dirty: str = "bus_stop_dirty"
 tb_name_brest_clean: str = "bus_stop_clear"
