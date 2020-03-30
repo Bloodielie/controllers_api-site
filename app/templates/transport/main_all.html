@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Choice City{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', path='transport/css/main.css') }}">
+{% endblock %}
+
+{% block body %}
+    <form method="POST" action="{{ request.url }}">
+        <select class="form-control mt-3" name="city">
+            {% for city in cities %}
+                <option value="{{ city }}">{{ city.capitalize() }}</option>
+            {% endfor %}
+        </select>
+        <div class="custom-control custom-radio mt-1">
+          <input type="radio" id="dirty" name="dirty_or_clear" class="custom-control-input" value="dirty" required>
+          <label class="custom-control-label" for="dirty">Dirty</label>
+        </div>
+        <div class="custom-control custom-radio mb-3">
+          <input type="radio" id="clear" name="dirty_or_clear" class="custom-control-input" value="clean" required>
+          <label class="custom-control-label" for="clear">Clear</label>
+        </div>
+        <input type="submit" value="Обновить" class="btn btn-info btn-lg btn-block">
+    </form>
+{% endblock %}

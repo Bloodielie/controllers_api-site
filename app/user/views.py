@@ -29,9 +29,9 @@ async def logout_and_remove_cookie(request: Request) -> RedirectResponse:
 
 async def valid_email(request: Request, user_in_token=Depends(get_current_user)) -> RedirectResponse:
     id: str = request.query_params.get('id')
-    if id.isdigit():
-        user_in_url = await UserRepository.get_user_id(int(id))
-        if user_in_url['id'] == user_in_token['id'] and not user_in_url['is_activatet']:
+    if id and id.isdigit():
+        user_in_url = await UserRepository.get_user('id', int(id))
+        if user_in_url and user_in_url['id'] == user_in_token['id'] and not user_in_url['is_activatet']:
             await user_in_url.update(is_activatet=True)
             return RedirectResponse(url=request.url_for('profile'))
         return RedirectResponse(url=request.url_for('logout'))
@@ -68,18 +68,20 @@ async def login(request: Request) -> Union[templates.TemplateResponse, RedirectR
     form_data: FormData = await request.form()
     username: str = form_data.get('login')
     password: str = form_data.get('password')
-    user = await UserRepository.get_user_by_name(username)
-    authenticate = authenticate_user(user, password)
-    if not authenticate:
-        return templates.TemplateResponse("user/login.html", {"request": request, 'not_auth': True})
+    if username and password:
+        user = await UserRepository.get_user('user_name', username)
+        authenticate = authenticate_user(user, password)
+        if not authenticate:
+            return templates.TemplateResponse("user/login.html", {"request": request, 'not_auth': True})
 
-    access_token: bytes = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: str = jsonable_encoder(access_token)
+        access_token: bytes = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
+        token: str = jsonable_encoder(access_token)
 
-    response = RedirectResponse(url=request.url_for('profile'), status_code=303)
-    max_age: int = ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    add_cookie(response, token, max_age)
-    return response
+        response = RedirectResponse(url=request.url_for('profile'), status_code=303)
+        max_age: int = ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        add_cookie(response, token, max_age)
+        return response
+    return RedirectResponse(url=request.url_for('login'), status_code=303)
 
 
 async def show_create_account(request: Request) -> templates.TemplateResponse:
@@ -91,25 +93,27 @@ async def create_account(request: Request, background_tasks: BackgroundTasks) ->
     username: str = form_data.get('login')
     password: str = form_data.get('password')
     email: str = form_data.get('email')
-    if not Email.email_validation(email):
-        return templates.TemplateResponse("user/create_account.html", {"request": request, 'not_valid_email': True})
-    if await UserRepository.is_user_exists(email, username):
-        return templates.TemplateResponse("user/create_account.html", {"request": request, 'user_exists': True})
-    password_hash = get_password_hash(password)
-    user_create = User(user_name=username, hashed_password=password_hash, email=email)
-    await UserRepository.create_user(user_create)
+    if username and password and email:
+        if not Email.email_validation(email):
+            return templates.TemplateResponse("user/create_account.html", {"request": request, 'not_valid_email': True})
+        if await UserRepository.is_user_exists(email, username):
+            return templates.TemplateResponse("user/create_account.html", {"request": request, 'user_exists': True})
+        password_hash = get_password_hash(password)
+        user_create = User(user_name=username, hashed_password=password_hash, email=email)
+        await UserRepository.create_user(user_create)
 
-    id = (await UserRepository.get_user_by_name(username))['id']
-    url = request.url_for('valid_email') + f'?id={id}'
-    background_tasks.add_task(Email.send_email, email, url)
+        id = (await UserRepository.get_user('user_name', username))['id']
+        url = request.url_for('valid_email') + f'?id={id}'
+        background_tasks.add_task(Email.send_email, email, url)
 
-    access_token: bytes = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token: str = jsonable_encoder(access_token)
+        access_token: bytes = create_access_token(data={"sub": username}, minute=ACCESS_TOKEN_EXPIRE_MINUTES)
+        token: str = jsonable_encoder(access_token)
 
-    response = RedirectResponse(url="/docs", status_code=303)
-    max_age: int = ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    add_cookie(response, token, max_age)
-    return response
+        response = RedirectResponse(url=request.url_for('profile'), status_code=303)
+        max_age: int = ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        add_cookie(response, token, max_age)
+        return response
+    return RedirectResponse(url=request.url_for('create_account'), status_code=303)
 
 
 async def show_bus_stop_info(request: Request):

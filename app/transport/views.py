@@ -61,3 +61,29 @@ async def transport_parameters_choice(request: Request, verify=Depends(verify_ci
         return templates.TemplateResponse("transport/transport_table.html", {"request": request, 'data': data,
                                                                              'transport_number': transport_number})
     return RedirectResponse(url=request.url_for('city_choice'), status_code=303)
+
+
+async def show_city_choice_all(request: Request):
+    cities: list = [city for city in list_bus_stop.keys()]
+    return templates.TemplateResponse("transport/main_all.html", {"request": request, 'cities': cities})
+
+
+async def city_choice_all(request: Request):
+    cities: list = [city for city in list_bus_stop.keys()]
+    form_data: FormData = await request.form()
+    city = form_data.get('city')
+    city = city if city in cities else 'brest'
+
+    selection_bus_stop = form_data.get('dirty_or_clear')
+    selection_bus_stop: str = selection_bus_stop if selection_bus_stop in ['dirty', 'clean'] else 'dirty'
+    table_name = f'bus_stop_dirty_{city}'
+    model = writers.get(city)[0]
+    if selection_bus_stop == 'clean':
+        model = writers.get(city)[1]
+        table_name = table_name.replace('dirty', 'clean')
+    query = "SELECT bus_stop as stop, COUNT(bus_stop) as value_msg, to_char(to_timestamp(max(time)), 'HH24:MI DD-MM-YY') as max_time\n" \
+            f"FROM {table_name}\n" \
+            "GROUP BY bus_stop\n" \
+            "ORDER BY value_msg desc;"
+    datas = await model.__database__.fetch_all(query=query)
+    return templates.TemplateResponse("transport/all_table.html", {"request": request, 'datas': datas, 'city': city})

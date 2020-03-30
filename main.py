@@ -16,7 +16,6 @@ from app.utils.exceptions import RequiresLoginException, RequiresSystemException
 
 from app.utils.vk_api import VkApi
 import uvicorn
-import os
 
 vk = VkApi(token=config.TOKEN_VK)
 
@@ -54,7 +53,7 @@ async def startup() -> None:
     for wr in writers:
         data = writers.get(wr)
         for info in data:
-            await asyncio.sleep(2)
+            await asyncio.sleep(0.3)
             asyncio.create_task(Writer(vk).write_in_database(info))
 
 
@@ -63,5 +62,7 @@ async def shutdown() -> None:
     await config.database.disconnect()
 
 if __name__ == "__main__":
-    port = os.environ.get('PORT')
-    uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
+    #from os import environ
+    #port = environ.get('PORT')
+    #uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
+    uvicorn.run("main:app")

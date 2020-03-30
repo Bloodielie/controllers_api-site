@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Any
 import orm
 from .models import User, UserInfo
 from datetime import datetime
@@ -15,38 +15,25 @@ class UserRepository:
                                               user_info=user_info)
 
     @classmethod
-    async def get_user_by_email(cls, email: str) -> Union[None, dict]:
-        try:
-            return await cls.model.objects.get(email=email)
-        except orm.exceptions.NoMatch:
-            return None
-
-    @classmethod
-    async def get_user_by_name(cls, user_name: str) -> Union[None, dict]:
-        try:
-            return await cls.model.objects.get(user_name=user_name)
-        except orm.exceptions.NoMatch:
-            return None
-
-    @classmethod
-    async def get_user_id(cls, id: int) -> Union[None, dict]:
-        try:
-            return await cls.model.objects.get(id=id)
-        except orm.exceptions.NoMatch:
-            return None
+    async def get_user(cls, parameter: str, value: Any) -> Union[User, None]:
+        argument = {parameter: value}
+        user = await cls.model.objects.filter(**argument).all()
+        if user:
+            return user[0]
+        return None
 
     @classmethod
     async def get_two_model(cls, first_model: User):
-        try:
-            pk: int = first_model.user_info.pk
-            return await cls.model_info.objects.get(id=pk)
-        except orm.exceptions.NoMatch:
-            return None
+        pk: int = first_model.user_info.pk
+        two_model = await cls.model_info.objects.filter(id=pk).all()
+        if two_model:
+            return two_model[0]
+        return None
 
     @classmethod
     async def is_user_exists(cls, email: str, user_name: str) -> bool:
-        name = await cls.get_user_by_name(user_name)
-        email = await cls.get_user_by_email(email)
+        name = await cls.get_user('user_name', user_name)
+        email = await cls.get_user('email', email)
         if not name and not email:
             return False
         return True

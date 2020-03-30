@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}All stop in {{ city.capitalize() }}{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <table class="table table-striped table-dark mt-5">
+    <thead>
+    <tr>
+        <th class="text-center w-25">Остановка</th>
+        <th class="text-center w-50">Кол-во сообщений</th>
+        <th class="text-center w-25">Последнее время</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for data in datas%}
+        <tr>
+            <td class="text-center">{{data.get('stop').capitalize()}}</td>
+            <td class="text-center">{{data.get('value_msg')}}</td>
+            <td class="text-center">{{data.get('max_time')}}</td>
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}
