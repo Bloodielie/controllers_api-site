@@ -62,7 +62,7 @@ async def shutdown() -> None:
     await config.database.disconnect()
 
 if __name__ == "__main__":
-    #from os import environ
-    #port = environ.get('PORT')
-    #uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
-    uvicorn.run("main:app")
+    from os import environ
+    port = environ.get('PORT')
+    uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
+    #uvicorn.run("main:app")
