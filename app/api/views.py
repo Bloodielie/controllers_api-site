@@ -5,16 +5,9 @@ from app.configuration.config_variables import writers
 from app.utils.utils import get_data_about_transport, get_busstop_transport, bus_stop_data, get_stop_city, get_transport_number_city
 
 router = APIRouter()
-
-
-# @router.get("/{city}/get_situation")
-# async def bus_stop(city: City,
-#                    selection_bus_stop: BusStopSelection,
-#                    time: int = 3600,
-#                    sort: str = 'Время',
-#                    time_format: str = '%H:%M') -> dict:
-#     """Gives information about all buses of a certain city"""
-#     return await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
+import jwt
+from .security.token import create_tokens
+from app.user.models import User
 
 
 @router.get("/{city}/get_situation/{transport_number_or_all}")
@@ -43,7 +36,8 @@ async def get_diverse_data(city: City, type_information: AllDataParameter, trans
     elif type_information == AllDataParameter.transport_stops.value:
         return get_busstop_transport(city, transport_type, transport_number)
 
-# @router.get("/{city}/{transport_type}/{transport_number}")
-# async def get_bus_stop_transport(city: City, transport_type: TransportType, transport_number: str) -> Union[str, list]:
-#     """ Gives information on certain buses of the city """
-#     return get_busstop_transport(city, transport_type, transport_number)
+
+@router.get("/auth")
+async def auth(login, password, fingerprint):
+
+    return create_tokens(data={"sub": "ilya"})

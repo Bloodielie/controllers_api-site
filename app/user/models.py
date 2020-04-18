@@ -12,6 +12,12 @@ class UserInfo(orm.Model):
     add_bus_stop_time = orm.DateTime(allow_null=True)
 
 
+class UserSecurity(orm.Model):
+    __tablename__ = 'UserSecurity'
+    __metadata__ = metadata
+    __database__ = database
+
+
 class User(orm.Model):
     __tablename__ = 'Users'
     __metadata__ = metadata
