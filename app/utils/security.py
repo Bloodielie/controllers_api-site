@@ -13,7 +13,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from starlette.requests import Request
 from starlette.responses import Response
 
-from app.user.models import User
+from app.user_auth.models import User
 import orm
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -81,7 +81,7 @@ def get_password_hash(password: str) -> str:
 
 
 def authenticate_user(user: orm.models, password: str):
-    # user <class 'models.database.User'>
+    # client <class 'models.database.User'>
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

@@ -10,13 +10,13 @@ config = Config(".env")
 VERSION = "0.1.5"
 TITLE = 'AntiContollerApi'
 DESCRIPTION = "I give you information about controllers in the cities of Belarus"
-OPENAPI_URL = "/api/v1/openapi.json"
+OPENAPI_URL = "/api/openapi.json"
 REDOC_URL = None
 
 # JWT
 SECRET_KEY = config('SECRET_KEY', cast=str)
 ALGORITHM = config('ALGORITHM', cast=str)
-ACCESS_TOKEN_EXPIRE_MINUTES = 7200
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 # VK
 TOKEN_VK: str = config('token', cast=str)

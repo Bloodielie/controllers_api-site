@@ -7,16 +7,6 @@ from app.utils.utils import get_data_about_transport, get_busstop_transport, bus
 router = APIRouter()
 
 
-# @router.get("/{city}/get_situation")
-# async def bus_stop(city: City,
-#                    selection_bus_stop: BusStopSelection,
-#                    time: int = 3600,
-#                    sort: str = 'Время',
-#                    time_format: str = '%H:%M') -> dict:
-#     """Gives information about all buses of a certain city"""
-#     return await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
-
-
 @router.get("/{city}/get_situation/{transport_number_or_all}")
 async def get_situation_in_city(city: City,
                                 transport_number_or_all: str,
@@ -42,8 +32,3 @@ async def get_diverse_data(city: City, type_information: AllDataParameter, trans
         return list(get_transport_number_city(city, transport_type))
     elif type_information == AllDataParameter.transport_stops.value:
         return get_busstop_transport(city, transport_type, transport_number)
-
-# @router.get("/{city}/{transport_type}/{transport_number}")
-# async def get_bus_stop_transport(city: City, transport_type: TransportType, transport_number: str) -> Union[str, list]:
-#     """ Gives information on certain buses of the city """
-#     return get_busstop_transport(city, transport_type, transport_number)

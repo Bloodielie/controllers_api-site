@@ -6,8 +6,8 @@ def route(prefix: str, endpoint: Callable, **kwargs):
     return prefix, endpoint, kwargs
 
 
-def application_route(router: Callable, prefix: str, **kwargs):
-    return router, prefix, kwargs
+def application_route(router: Callable, **kwargs):
+    return router, kwargs
 
 
 class Router(APIRouter):
@@ -29,4 +29,4 @@ class Router(APIRouter):
 
     def include_application_routes(self) -> None:
         for router in self.application_routes:
-            self.include_router(router=router[0], prefix=router[1], **router[2])
+            self.include_router(router=router[0], **router[1])

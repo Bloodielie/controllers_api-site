@@ -1,29 +1,24 @@
 import asyncio
-import sqlalchemy
-from fastapi import FastAPI
-from app.main import urls
 
+import sqlalchemy
+import uvicorn
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
-from starlette.requests import Request
-from starlette.staticfiles import StaticFiles
-from starlette.responses import RedirectResponse
 
 from app.configuration import config
 from app.configuration.config_variables import writers
-
-from app.utils.write_in_bd_data import Writer
-from app.utils.exceptions import RequiresLoginException, RequiresSystemException
-
+from app.main import urls
 from app.utils.vk_api import VkApi
-import uvicorn
+from app.utils.write_in_bd_data import Writer
+from middleware import FrontMiddleware
 
 vk = VkApi(token=config.TOKEN_VK)
 
-app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL,
-              redoc_url=config.REDOC_URL)
+app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL)
 
-app.include_router(urls.app)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.include_router(urls.app, prefix='/api')
+app.mount("/", StaticFiles(directory="front"), name="static")
 
 origins = ["*"]
 app.add_middleware(
@@ -31,18 +26,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-@app.exception_handler(RequiresLoginException)
-async def exception_handler(request: Request, exc: RequiresLoginException):
-    return RedirectResponse(url=request.url_for('profile'), status_code=303)
-
-
-@app.exception_handler(RequiresSystemException)
-async def exception_handler(request: Request, exc: RequiresSystemException):
-    return RedirectResponse(url=request.url_for('login'), status_code=303)
+    allow_headers=["*"],)
 
 
 @app.on_event("startup")
@@ -56,6 +40,11 @@ async def startup() -> None:
             await asyncio.sleep(1)
             asyncio.create_task(Writer(vk).write_in_database(info))
 
+    app.add_middleware(FrontMiddleware,
+                       path_to_html="front/index.html",
+                       static_directory="front",
+                       not_static_url=['api', 'docs', 'redoc', 'open_api'], )
+
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
@@ -65,4 +54,4 @@ if __name__ == "__main__":
     from os import environ
     port = environ.get('PORT')
     uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
-    #uvicorn.run("main:app")
+    # uvicorn.run("main:app")

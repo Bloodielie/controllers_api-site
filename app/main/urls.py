@@ -1,15 +1,13 @@
-from fastapi import Depends
 import app.api.views as api
-from app.user.urls import auth_router, no_auth_router
-from app.main import dependency
-from app.transport.urls import transport_router
+import app.client.auth.views as auth
+import app.client.user.views as user
+
 from app.utils.library_modification import application_route, Router
 
 application_routes = [
-    application_route(api.router, prefix='/api', tags=["API"]),
-    application_route(transport_router, prefix='/transport'),
-    application_route(no_auth_router, prefix='/user', dependencies=[Depends(dependency.redirect_if_authorization)]),
-    application_route(auth_router, prefix='/user', dependencies=[Depends(dependency.redirect_if_not_authorization)]),
+    application_route(user.router, tags=["USER"], prefix='/user'),
+    application_route(auth.router, tags=["AUTH"]),
+    application_route(api.router, tags=["API"]),
 ]
 
 app = Router(application_routes=application_routes)
