@@ -14,7 +14,7 @@ def cleaning_post(data: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
         for iteration_value, word_data in enumerate(word.split()):
             if word_data in clean_dirty_word:
                 break
-            if iteration_value >= len(word.split())-1:
+            if iteration_value >= len(word.split()) - 1:
                 yield word, date[1]
 
 

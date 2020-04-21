@@ -1,20 +1,20 @@
+import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Union
-import time
 
 import jwt
 from fastapi.encoders import jsonable_encoder
 from jwt import PyJWTError
 
-from app.configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.client.user_repository import UserRepository
+from app.configuration.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 def generate_token(data: Dict[str, str], token_type: str) -> str:
     to_encode_token = data.copy()
     expire_token = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     if token_type == 'refresh_token':
-        expire_token += timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES*40)
+        expire_token += timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES * 40)
     to_encode_token.update({"exp": expire_token, "type": token_type})
     return jsonable_encoder(jwt.encode(to_encode_token, SECRET_KEY, algorithm=ALGORITHM))
 

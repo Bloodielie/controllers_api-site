@@ -1,13 +1,15 @@
+import re
+from asyncio import sleep
+from typing import Iterator
+
+from orm import Model
+
+from app.configuration.config import UPDATE_TIME
+from app.configuration.config_variables import id_groups
+from app.utils import vk_api
+from app.utils.getting_stops_data import get_max_value_bd
 from app.utils.getting_vk_posts import get_post_wall, get_comment_data
 from app.utils.validation import cleaning_post, validation_bus_stop, cleaning_post_otherwise
-from app.configuration.config import UPDATE_TIME
-from asyncio import sleep
-from app.utils.getting_stops_data import get_max_value_bd
-from app.configuration.config_variables import id_groups
-import re
-from orm import Model
-from typing import Iterator
-from app.utils import vk_api
 
 
 class Writer:

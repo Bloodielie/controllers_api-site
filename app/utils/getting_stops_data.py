@@ -1,5 +1,5 @@
-from sqlalchemy import desc
 from orm import models, exceptions
+from sqlalchemy import desc
 
 
 async def get_max_value_bd(model: models, value) -> int:

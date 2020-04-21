@@ -1,14 +1,14 @@
-from time import time
 from datetime import datetime
+from time import time
+from typing import Union
 
 from fastapi import Depends, APIRouter
 
-from app.configuration.config_variables import writers
-from app.utils.utils import get_stop_city
 from app.client import pydantic_models
 from app.client.user.dependency import check_access_token
 from app.client.user_repository import UserRepository
-from typing import Union
+from app.configuration.config_variables import writers
+from app.utils.utils import get_stop_city
 
 router = APIRouter()
 user_repository = UserRepository()

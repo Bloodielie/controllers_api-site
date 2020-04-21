@@ -1,10 +1,10 @@
-from app.configuration.config import LOGIN_EMAIL, PASSWORD_EMAIL
-from typing import Union
 import re
-
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Union
+
+from app.configuration.config import LOGIN_EMAIL, PASSWORD_EMAIL
 
 
 class Email:

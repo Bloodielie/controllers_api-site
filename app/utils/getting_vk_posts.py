@@ -1,5 +1,6 @@
-from app.utils.vk_api import VkApi
 import asyncio
+
+from app.utils.vk_api import VkApi
 
 
 async def get_post_wall(vk: VkApi, count: int = 100, group_id: int = 72869598):

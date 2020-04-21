@@ -3,11 +3,11 @@ from typing import Union
 from fastapi import BackgroundTasks, APIRouter
 from starlette.requests import Request
 
-from app.utils.email import Email
 from app.client import pydantic_models
 from app.client.security.auth import authenticate_user, get_password_hash, get_email_verify_postfix, verify_password
 from app.client.security.token import create_tokens, TokenTools
 from app.client.user_repository import UserRepository
+from app.utils.email import Email
 
 router = APIRouter()
 user_repository = UserRepository()

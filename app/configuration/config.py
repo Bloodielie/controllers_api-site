@@ -1,8 +1,9 @@
-from app.utils.json import get_json
+import sqlalchemy
+from databases import Database
 from starlette.config import Config
 from starlette.templating import Jinja2Templates
-from databases import Database
-import sqlalchemy
+
+from app.utils.json import get_json
 
 config = Config(".env")
 
@@ -11,7 +12,6 @@ VERSION = "0.1.5"
 TITLE = 'AntiContollerApi'
 DESCRIPTION = "I give you information about controllers in the cities of Belarus"
 OPENAPI_URL = "/api/openapi.json"
-REDOC_URL = None
 
 # JWT
 SECRET_KEY = config('SECRET_KEY', cast=str)
@@ -58,3 +58,6 @@ clean_dirty_word: list = ['чисто', 'как', 'актуально?', 'cто�
 clean_clean_word: list = ['чисто', 'стерильно', 'чистота', 'чистенько']
 
 UPDATE_TIME: int = 100
+
+# SPA STATIC FILES
+STATIC_DIRECTORY = "front"

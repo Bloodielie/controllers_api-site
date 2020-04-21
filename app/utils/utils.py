@@ -1,9 +1,9 @@
 from time import time as tm
 from typing import Union
 
+from app.configuration.config_variables import list_bus_stop, id_groups
 from .getting_stops_data import get_city_data
 from .validation import sort_busstop
-from app.configuration.config_variables import list_bus_stop, id_groups
 
 
 def get_stop_city(city: str) -> list:

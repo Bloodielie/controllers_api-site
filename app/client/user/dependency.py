@@ -1,4 +1,5 @@
 from starlette.requests import Request
+
 from app.client.security.token import TokenTools
 
 token_tools = TokenTools()

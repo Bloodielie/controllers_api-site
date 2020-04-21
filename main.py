@@ -26,7 +26,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],)
+    allow_headers=["*"], )
 
 
 @app.on_event("startup")
@@ -39,19 +39,19 @@ async def startup() -> None:
         for info in data:
             await asyncio.sleep(1)
             asyncio.create_task(Writer(vk).write_in_database(info))
-
     app.add_middleware(FrontMiddleware,
-                       path_to_html="front/index.html",
-                       static_directory="front",
-                       not_static_url=['api', 'docs', 'redoc', 'open_api'], )
+                       static_directory=config.STATIC_DIRECTORY,
+                       not_static_url=['api', app.docs_url, app.redoc_url], )
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await config.database.disconnect()
 
+
 if __name__ == "__main__":
     from os import environ
+
     port = environ.get('PORT')
     if port is None:
         uvicorn.run("main:app")

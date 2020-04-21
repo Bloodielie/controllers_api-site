@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from .enum import City, BusStopSelection, TransportType, AllDataParameter
 from app.configuration.config_variables import writers
 from app.utils.utils import get_data_about_transport, get_busstop_transport, bus_stop_data, get_stop_city, get_transport_number_city
+from .enum import City, BusStopSelection, TransportType, AllDataParameter
 
 router = APIRouter()
 

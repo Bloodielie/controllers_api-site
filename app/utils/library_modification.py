@@ -1,5 +1,6 @@
-from fastapi import APIRouter
 from typing import Callable
+
+from fastapi import APIRouter
 
 
 def route(prefix: str, endpoint: Callable, **kwargs):
