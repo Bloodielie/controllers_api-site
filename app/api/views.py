@@ -15,7 +15,7 @@ async def get_situation_in_city(city: City,
                                 sort: str = 'Время',
                                 time_format: str = '%H:%M',
                                 transport_type: TransportType = 'bus') -> dict:
-    """Gives information about a particular bus in a certain city"""
+    """Information about the situation in the city"""
     if transport_number_or_all == 'all':
         return await bus_stop_data(time, city, selection_bus_stop, sort, time_format, writers)
     else:
@@ -26,6 +26,12 @@ async def get_situation_in_city(city: City,
 @router.get("/{city}/{type_information}")
 async def get_diverse_data(city: City, type_information: AllDataParameter, transport_type: TransportType = 'bus',
                            transport_number: str = '12') -> list:
+    """
+    Provides general information about the city \n
+    city_stops| path_parameters: city, query_parameters: none \n
+    transport_numbers | path_parameters: city, query_parameters: transport_type \n
+    transport_stops | path_parameters: city, query_parameters: transport_type, transport_number
+    """
     if type_information == AllDataParameter.city_stops.value:
         return get_stop_city(city)
     elif type_information == AllDataParameter.transport_numbers.value:

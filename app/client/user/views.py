@@ -16,6 +16,7 @@ user_repository = UserRepository()
 
 @router.post('/add_bus_stop', response_model=pydantic_models.TokenOut)
 async def add_bus_stop(data: pydantic_models.AddBusStop, token_check: check_access_token = Depends()):
+    """Adding a transport stop"""
     if not token_check[0]:
         return pydantic_models.TokenOut(status=False)
 
@@ -45,6 +46,11 @@ async def add_bus_stop(data: pydantic_models.AddBusStop, token_check: check_acce
 
 @router.get('/profile', response_model=Union[pydantic_models.TokenOut, pydantic_models.Profile])
 async def profile(token_check: check_access_token = Depends()):
+    """
+    Gives profile information \n
+    Still need to pass to header access_token example \n
+    HEADER: Authorization: "access_token"
+    """
     if not token_check[0]:
         return pydantic_models.TokenOut(status=False)
 

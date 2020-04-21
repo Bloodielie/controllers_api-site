@@ -16,6 +16,9 @@ token_tools = TokenTools()
 
 @router.post('/auth', response_model=Union[pydantic_models.UserAuthOut, pydantic_models.TokenOut])
 async def auth(data: pydantic_models.UserAuthIn):
+    """
+    User authorization
+    """
     user = await user_repository.get_user('user_name', data.login)
     authenticate = authenticate_user(user, data.password)
     if not authenticate:
@@ -28,6 +31,9 @@ async def auth(data: pydantic_models.UserAuthIn):
 
 @router.post('/check_token', response_model=pydantic_models.TokenOut)
 async def check_token(data: pydantic_models.TokenIn):
+    """
+    Check refresh_token or access_token
+    """
     token_status = await token_tools.check_token(data.token)
     return pydantic_models.TokenOut(status=token_status)
 
