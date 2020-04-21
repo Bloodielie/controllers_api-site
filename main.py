@@ -26,7 +26,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"], )
+    allow_headers=["*"],)
 
 
 @app.on_event("startup")
@@ -39,6 +39,7 @@ async def startup() -> None:
         for info in data:
             await asyncio.sleep(1)
             asyncio.create_task(Writer(vk).write_in_database(info))
+
     app.add_middleware(FrontMiddleware,
                        static_directory=config.STATIC_DIRECTORY,
                        not_static_url=['api', app.docs_url, app.redoc_url], )
