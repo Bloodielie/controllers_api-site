@@ -6,10 +6,10 @@ from orm import Model
 
 from app.configuration.config import UPDATE_TIME
 from app.configuration.config_variables import id_groups
-from app.utils.vk_api import VkApiAbstract
 from app.utils.getting_stops_data import get_max_value_bd
-from app.utils.getting_vk_posts import get_post_wall, get_comment_data
+from app.utils.getting_vk_posts import VkPostGetter, VkPostGetterAbstract
 from app.utils.validation import cleaning_post, validation_bus_stop, cleaning_post_otherwise
+from app.utils.vk_api import VkApiAbstract
 
 
 class Writer:
@@ -18,9 +18,10 @@ class Writer:
 
     async def write_in_database(self, model: Model) -> None:
         name_class: str = model.__name__.lower()
-        data_utils = DataGetter(name_class)
+        post_getter = VkPostGetter(self.vk)
+        data_utils = DataGetter(name_class, post_getter)
         while True:
-            vk_post: list = await data_utils.get_rewrite_post(self.vk)
+            vk_post: list = await data_utils.get_rewrite_post()
             data_post = data_utils.get_cleaning_post(vk_post)
             stop: list = data_utils.get_bus_stop()
             data: list = validation_bus_stop(data_post, stop)
@@ -37,15 +38,16 @@ class Writer:
 
 
 class DataGetter:
-    def __init__(self, name_class: str):
+    def __init__(self, name_class: str, vk_post_getter: VkPostGetterAbstract):
         self.name_class = name_class
+        self.vk_post_getter = vk_post_getter
 
-    async def get_rewrite_post(self, vk):
+    async def get_rewrite_post(self):
         id_group: int = self.__get_id_group()
         if self.name_class.find('gomel') != -1:
-            return await get_comment_data(vk, id_group)
+            return await self.vk_post_getter.comment_data_getter(id_group)
         else:
-            return await get_post_wall(vk, id_group)
+            return await self.vk_post_getter.post_data_getter(id_group)
 
     def get_bus_stop(self) -> list:
         for key_city in id_groups.keys():
