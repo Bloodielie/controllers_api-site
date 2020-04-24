@@ -1,4 +1,6 @@
 import asyncio
+from random import randint
+import aiohttp
 
 import sqlalchemy
 import uvicorn
@@ -12,8 +14,6 @@ from app.main import urls
 from app.utils.vk_api import VkApi
 from app.utils.write_in_bd_data import Writer
 from middleware import FrontMiddleware
-
-vk = VkApi(token=config.TOKEN_VK)
 
 app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL)
 
@@ -34,11 +34,17 @@ async def startup() -> None:
     engine = sqlalchemy.create_engine(str(config.database.url))
     config.metadata.create_all(engine)
     await config.database.connect()
+
+    loop = asyncio.get_running_loop()
+    session = aiohttp.ClientSession(loop=loop)
+    vk = VkApi(token=config.TOKEN_VK, session=session, loop=loop)
+
+    bus_stop_writer = Writer(vk)
     for wr in writers:
         data = writers.get(wr)
         for info in data:
-            await asyncio.sleep(1)
-            asyncio.create_task(Writer(vk).write_in_database(info))
+            await asyncio.sleep(randint(1, 3))
+            asyncio.create_task(bus_stop_writer.write_in_database(info))
 
     app.add_middleware(FrontMiddleware,
                        static_directory=config.STATIC_DIRECTORY,
