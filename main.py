@@ -16,7 +16,6 @@ from app.utils.write_in_bd_data import Writer
 from middleware import FrontMiddleware
 
 app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL)
-
 app.include_router(urls.app, prefix='/api')
 app.mount("/", StaticFiles(directory="front"), name="static")
 

@@ -1,7 +1,8 @@
-import aiohttp
 import asyncio
-from typing import Union, Dict
 from abc import ABC, abstractmethod
+from typing import Union, Dict
+
+import aiohttp
 
 
 class VkApiAbstract(ABC):
