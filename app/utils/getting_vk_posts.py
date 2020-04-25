@@ -21,9 +21,9 @@ class VkPostGetter(VkPostGetterAbstract):
         self.post_count = post_count
 
     async def post_data_getter(self, group_id: int):
-        wall = await self.get_wall_data(group_id)
+        wall = await self.get_wall_data(group_id, self.post_count)
         if wall is None:
-            return
+            return []
 
         data = []
         for items in wall:
@@ -33,11 +33,11 @@ class VkPostGetter(VkPostGetterAbstract):
     async def comment_data_getter(self, group_id: int):
         wall = await self.get_wall_data(group_id, 2)
         if wall is None:
-            return
+            return []
 
         comments = await self.comment_getter(wall[0], group_id)
         if len(comments) == 0:
-            return
+            return []
         await asyncio.sleep(1)
         comments2 = await self.comment_getter(wall[1], group_id)
         if len(comments2) > 0:

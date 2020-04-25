@@ -22,8 +22,11 @@ class Writer:
         data_utils = DataGetter(name_class, post_getter)
         while True:
             vk_post: list = await data_utils.get_rewrite_post()
+            if not len(vk_post):
+                await sleep(UPDATE_TIME)
+                continue
             data_post = data_utils.get_cleaning_post(vk_post)
-            stop: list = data_utils.get_bus_stop()
+            stop = data_utils.get_bus_stop()
             data: list = validation_bus_stop(data_post, stop)
             datas: list = list(sorted(data, key=lambda x: x[1]))
             await self.write_data_bd(model, datas, 'time')
@@ -43,7 +46,7 @@ class DataGetter:
         self.vk_post_getter = vk_post_getter
 
     async def get_rewrite_post(self):
-        id_group: int = self.__get_id_group()
+        id_group: int = self._get_id_group(self.name_class)
         if self.name_class.find('gomel') != -1:
             return await self.vk_post_getter.comment_data_getter(id_group)
         else:
@@ -57,9 +60,10 @@ class DataGetter:
             else:
                 return id_groups.get(city_name[0])[1]
 
-    def __get_id_group(self) -> int:
+    @staticmethod
+    def _get_id_group(name_class: str) -> int:
         for key_city in id_groups.keys():
-            city_name = re.search(key_city, self.name_class)
+            city_name = re.search(key_city, name_class)
             if not city_name:
                 continue
             else:
