@@ -42,26 +42,23 @@ class Route(BaseModel):
 
 
 class Router(APIRouter):
-    def __init__(self, api_routers: list = None, application_routes: list = None, include_in_schema: bool = False):
+    def __init__(self, routers: List[Union[ApplicationRoute, Route]], include_in_schema: bool = False):
         super().__init__()
-        if api_routers:
-            self.api_routers = api_routers
-            self.include_in_schema = include_in_schema
-            self.adding_api_routes()
-        if application_routes:
-            self.application_routes = application_routes
-            self.include_application_routes()
+        assert isinstance(routers, list), "You must pass a list of routes"
+        assert len(routers) > 0, "The list should contain routes"
+        self.routers = routers
+        self.include_in_schema = include_in_schema
+        self.add_routes(self.routers)
 
-    def adding_api_routes(self) -> None:
-        for router in self.api_routers:
-            assert isinstance(router, Route), 'Here you need to pass Route'
-            if self.include_in_schema:
+    def add_routes(self, routers) -> None:
+        for router in routers:
+            if isinstance(router, ApplicationRoute):
+                self.include_router(**router.dict())
+            elif isinstance(router, Route):
+                if self.include_in_schema:
+                    self.add_api_route(**router.dict())
+                    continue
+                router.include_in_schema = self.include_in_schema
                 self.add_api_route(**router.dict())
-                return
-            router.include_in_schema = False
-            self.add_api_route(**router.dict())
-
-    def include_application_routes(self) -> None:
-        for router in self.application_routes:
-            assert isinstance(router, ApplicationRoute), 'Here you need to pass ApplicationRoute'
-            self.include_router(**router.dict())
+            else:
+                raise TypeError('You passed the wrong route')

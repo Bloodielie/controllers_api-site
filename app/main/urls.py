@@ -10,4 +10,4 @@ application_routes = [
     ApplicationRoute(router=api.router, tags=["API"]),
 ]
 
-app = Router(application_routes=application_routes)
+app = Router(routers=application_routes)
