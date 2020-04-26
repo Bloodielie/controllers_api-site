@@ -20,8 +20,10 @@ class VkPostGetter(VkPostGetterAbstract):
         self._vk = vk
         self.post_count = post_count
 
-    async def post_data_getter(self, group_id: int):
-        wall = await self.get_wall_data(group_id, self.post_count)
+    async def post_data_getter(self, group_id: int, post_count: int = None):
+        if post_count is None:
+            post_count = self.post_count
+        wall = await self.get_wall_data(group_id, post_count)
         if wall is None:
             return []
 

@@ -8,18 +8,18 @@ from app.configuration.config import UPDATE_TIME
 from app.configuration.config_variables import id_groups
 from app.utils.getting_stops_data import get_max_value_bd
 from app.utils.getting_vk_posts import VkPostGetter, VkPostGetterAbstract
-from app.utils.validation import cleaning_post, validation_bus_stop, cleaning_post_otherwise
+from app.utils.validation import validation_bus_stop, PostCleaner, PostCleanerAbstract
 from app.utils.vk_api import VkApiAbstract
 
 
 class Writer:
     def __init__(self, vk: VkApiAbstract):
         self.vk = vk
+        self._post_getter = VkPostGetter(self.vk)
+        self._post_cleaner = PostCleaner()
 
     async def write_in_database(self, model: Model) -> None:
-        name_class: str = model.__name__.lower()
-        post_getter = VkPostGetter(self.vk)
-        data_utils = DataGetter(name_class, post_getter)
+        data_utils = DataGetter(model.__name__.lower(), self._post_getter, self._post_cleaner)
         while True:
             vk_post: list = await data_utils.get_rewrite_post()
             if not len(vk_post):
@@ -39,11 +39,34 @@ class Writer:
             if _data[1] > max_time_bd:
                 await model.objects.create(bus_stop=_data[0], time=_data[1])
 
+    @property
+    def post_getter(self):
+        return self._post_getter
+
+    @post_getter.setter
+    def post_getter(self, value: VkPostGetterAbstract):
+        if isinstance(value, VkPostGetterAbstract):
+            self._post_getter = value
+        else:
+            raise TypeError('Post_getter should inherit from VkPostGetterAbstract')
+
+    @property
+    def post_cleaner(self):
+        return self._post_cleaner
+
+    @post_cleaner.setter
+    def post_cleaner(self, value: PostCleanerAbstract):
+        if isinstance(value, PostCleanerAbstract):
+            self._post_getter = value
+        else:
+            raise TypeError('Post_cleaner should inherit from PostCleanerAbstract')
+
 
 class DataGetter:
-    def __init__(self, name_class: str, vk_post_getter: VkPostGetterAbstract):
+    def __init__(self, name_class: str, vk_post_getter: VkPostGetterAbstract, post_cleaner: PostCleanerAbstract):
         self.name_class = name_class
         self.vk_post_getter = vk_post_getter
+        self.post_cleaner = post_cleaner
 
     async def get_rewrite_post(self):
         id_group: int = self._get_id_group(self.name_class)
@@ -71,6 +94,6 @@ class DataGetter:
 
     def get_cleaning_post(self, vk_post: list) -> Iterator[tuple]:
         if self.name_class.find('dirty') != -1:
-            return cleaning_post(vk_post)
+            return self.post_cleaner.cleaning_posts(vk_post, 'dirty')
         else:
-            return cleaning_post_otherwise(vk_post)
+            return self.post_cleaner.cleaning_posts(vk_post, 'clean')

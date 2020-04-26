@@ -2,29 +2,35 @@ from datetime import datetime
 from typing import Tuple, Union, Iterator
 
 from app.configuration.config import clean_dirty_word, clean_clean_word
+from abc import ABC, abstractmethod
 
 
-def cleaning_words(string: str) -> str:
-    return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '').lower()
+class PostCleanerAbstract(ABC):
+    @abstractmethod
+    def cleaning_posts(self, posts: Iterator[tuple], type_cleaning: str) -> Iterator[Tuple[str, int]]:
+        raise NotImplementedError
 
 
-def cleaning_post(data: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
-    for date in data:
-        word: str = cleaning_words(date[0])
-        for iteration_value, word_data in enumerate(word.split()):
-            if word_data in clean_dirty_word:
-                break
-            if iteration_value >= len(word.split()) - 1:
-                yield word, date[1]
+class PostCleaner(PostCleanerAbstract):
+    def cleaning_posts(self, posts: Iterator[tuple], type_cleaning: str) -> Iterator[Tuple[str, int]]:
+        for post in posts:
+            word: str = self.cleaning_words(post[0])
+            for iteration_value, word_data in enumerate(word.split()):
+                if type_cleaning == 'dirty':
+                    if word_data in clean_dirty_word:
+                        break
+                    if iteration_value >= len(word.split()) - 1:
+                        yield word, post[1]
+                elif type_cleaning == 'clean':
+                    if word_data in clean_clean_word:
+                        yield word, post[1]
+                        break
+                else:
+                    raise Exception('Incorrect cleaning type indicated')
 
-
-def cleaning_post_otherwise(data: Iterator[tuple]) -> Iterator[Tuple[str, int]]:
-    for date in data:
-        word: str = cleaning_words(date[0])
-        for iteration_value, word_data in enumerate(word.split()):
-            if word_data in clean_clean_word:
-                yield word, date[1]
-                break
+    @staticmethod
+    def cleaning_words(string: str) -> str:
+        return string.replace(',', '').replace('\n', '').replace('-', ' ').replace('!', '').lower()
 
 
 def validation_bus_stop(data: Iterator[tuple], stop_bus: list) -> list:
