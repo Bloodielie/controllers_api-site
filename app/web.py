@@ -1,7 +1,7 @@
 import asyncio
 from random import randint
-import aiohttp
 
+import aiohttp
 import sqlalchemy
 import uvicorn
 from fastapi import FastAPI
@@ -11,13 +11,17 @@ from starlette.middleware.cors import CORSMiddleware
 from app.configuration import config
 from app.configuration.config_variables import writers
 from app.main import urls
+from app.main.middleware import FrontMiddleware
 from app.utils.vk_api import VkApi
 from app.utils.write_in_bd_data import Writer
-from middleware import FrontMiddleware
+from celery import Celery
 
 app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL)
 app.include_router(urls.app, prefix='/api')
-app.mount("/", StaticFiles(directory="front"), name="static")
+app.mount("/", StaticFiles(directory="../front"), name="static")
+
+celery = Celery(app.title)
+celery.conf.update(BROKER_URL=config.CELERY_BROKER_URL, CELERY_RESULT_BACKEND=config.CELERY_RESULT_BACKEND)
 
 origins = ["*"]
 app.add_middleware(
@@ -25,7 +29,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],)
+    allow_headers=["*"], )
 
 
 @app.on_event("startup")
@@ -60,6 +64,6 @@ if __name__ == "__main__":
 
     port = environ.get('PORT')
     if port is None:
-        uvicorn.run("main:app")
+        uvicorn.run("web:app")
     else:
         uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")
