@@ -1,3 +1,9 @@
+import sys
+import os
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, os.path.split(dir_path)[0])
+
 import asyncio
 from random import randint
 
@@ -10,18 +16,14 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.configuration import config
 from app.configuration.config_variables import writers
-from app.main import urls
-from app.main.middleware import FrontMiddleware
+from app.core import urls
+from app.core.middleware import FrontMiddleware
 from app.utils.vk_api import VkApi
 from app.utils.write_in_bd_data import Writer
-from celery import Celery
 
 app = FastAPI(title=config.TITLE, description=config.DESCRIPTION, version=config.VERSION, openapi_url=config.OPENAPI_URL)
 app.include_router(urls.app, prefix='/api')
-app.mount("/", StaticFiles(directory="../front"), name="static")
-
-celery = Celery(app.title)
-celery.conf.update(BROKER_URL=config.CELERY_BROKER_URL, CELERY_RESULT_BACKEND=config.CELERY_RESULT_BACKEND)
+app.mount("/", StaticFiles(directory="./front"), name="static")
 
 origins = ["*"]
 app.add_middleware(
@@ -64,6 +66,6 @@ if __name__ == "__main__":
 
     port = environ.get('PORT')
     if port is None:
-        uvicorn.run("web:app")
+        uvicorn.run("main:app")
     else:
         uvicorn.run("main:app", host="0.0.0.0", port=int(port), log_level="info")

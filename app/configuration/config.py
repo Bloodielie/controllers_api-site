@@ -40,7 +40,7 @@ tb_name_grodno_clean: str = "bus_stop_clean_grodno"
 templates = Jinja2Templates(directory="app/templates")
 
 # JSON
-path_to_json = 'configuration/json'
+path_to_json = 'app/configuration/json'
 stop_bus_brest: list = get_json(f'{path_to_json}/stopbus_brest.json')
 stop_bus_gomel: list = get_json(f'{path_to_json}/stopbus_gomel.json')
 stop_bus_grodno: list = get_json(f'{path_to_json}/stopbus_grodno.json')
@@ -60,7 +60,7 @@ clean_clean_word: list = ['чисто', 'стерильно', 'чистота', 
 UPDATE_TIME: int = 100
 
 # SPA STATIC FILES
-STATIC_DIRECTORY = "../front"
+STATIC_DIRECTORY = "./front"
 
 # Celery
 CELERY_BROKER_URL = config('REDIS_URL', cast=str)

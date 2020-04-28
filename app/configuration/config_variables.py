@@ -1,4 +1,4 @@
-from app.main import models
+from app.core import models
 from . import config
 
 writers: dict = {
