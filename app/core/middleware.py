@@ -19,6 +19,7 @@ class FrontMiddleware:
             self.static_files.extend(data)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        print(scope["type"])
         url = URL(scope=scope)
         if url.path.split('/')[1] not in self.static_files:
             response = FileResponse(self.path_to_html)
