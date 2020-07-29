@@ -3,7 +3,7 @@ asyncpg==0.20.1
 databases==0.2.6
 fastapi==0.52.0
 orm==0.1.5
-uvicorn==0.11.3
+uvicorn==0.11.7
 pytest==5.4.0
 PyJWT==1.7.1
 passlib==1.7.2
