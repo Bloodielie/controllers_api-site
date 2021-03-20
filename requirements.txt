@@ -7,7 +7,7 @@ uvicorn==0.11.3
 pytest==5.4.0
 PyJWT==1.7.1
 passlib==1.7.2
-Jinja2==2.11.1
+Jinja2==2.11.3
 aiofiles==0.4.0
 psycopg2==2.8.4
 python-multipart==0.0.5
