@@ -5,7 +5,7 @@ fastapi==0.52.0
 orm==0.1.5
 uvicorn==0.11.3
 pytest==5.4.0
-PyJWT==1.7.1
+PyJWT==2.4.0
 passlib==1.7.2
 Jinja2==2.11.1
 aiofiles==0.4.0
